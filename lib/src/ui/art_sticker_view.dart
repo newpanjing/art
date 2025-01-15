@@ -76,7 +76,9 @@ class _ArtStickerViewState extends State<ArtStickerView> {
 
   Widget _buildDrag({required Widget child}) {
     return GestureDetector(
-      onTap: widget.onSelected,
+      onTap: (){
+        //阻止点击事件
+      },
       onDoubleTap: widget.onDoubleTap,
       onPanDown: (details) {
         widget.onSelected?.call();
