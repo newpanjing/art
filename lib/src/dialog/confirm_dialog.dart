@@ -20,10 +20,14 @@ showConfirmDialog({
             },
             child: Text('Cancel'),
           ),
-          TextButton(
+          FilledButton(
             onPressed: () {
+              onConfirm();
               context.back(true);
             },
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+            ),
             child: Text('OK'),
           ),
         ],
