@@ -19,3 +19,4 @@ export 'src/ui/input/art_number_input.dart';
 export 'src/ui/input/art_size_input.dart';
 export 'src/ui/art_mouse_decorator.dart';
 export 'src/ui/art_sticker_view.dart';
+export 'src/ui/art_popup_menu.dart';
