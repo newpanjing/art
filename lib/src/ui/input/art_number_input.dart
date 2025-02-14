@@ -8,6 +8,7 @@ class ArtNumberInput extends StatefulWidget {
   final int min;
   final int max;
   final String label;
+  final String message;
 
   const ArtNumberInput(
       {super.key,
@@ -16,6 +17,7 @@ class ArtNumberInput extends StatefulWidget {
       this.value = 1,
       this.step = 1,
       this.label = "",
+        this.message="按住鼠标←→滑动调节",
       this.onChanged});
 
   @override
@@ -153,7 +155,7 @@ class _ArtNumberInputState extends State<ArtNumberInput> {
                   color: _isDragging ? Colors.grey[100] : null,
                 ),
                 child: Tooltip(
-                  message: "按住鼠标←→滑动调节",
+                  message: widget.message,
                   child: widget.label.isEmpty
                       ? Icon(Icons.compare_arrows_sharp,
                               size: 13, color: Colors.grey[600])

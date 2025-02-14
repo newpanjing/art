@@ -9,6 +9,7 @@ class ArtSizeInput extends StatefulWidget {
   final double step;
   final String leftLabel;
   final String rightLabel;
+  final String message;
 
   const ArtSizeInput({
     super.key,
@@ -17,6 +18,7 @@ class ArtSizeInput extends StatefulWidget {
     this.min = 0,
     this.max = 10000,
     this.step = 1,
+    this.message = '按住鼠标←→滑动调节',
     this.leftLabel = 'W',
     this.rightLabel = 'H',
   });
@@ -26,17 +28,18 @@ class ArtSizeInput extends StatefulWidget {
 }
 
 class _ArtSizeInputState extends State<ArtSizeInput> {
-
   @override
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Row(
       spacing: 8,
       children: [
         ArtNumberInput(
+          message: widget.message,
           value: widget.value.width.toInt(),
           label: widget.leftLabel,
           onChanged: (value) {
@@ -46,6 +49,7 @@ class _ArtSizeInputState extends State<ArtSizeInput> {
         ArtNumberInput(
           value: widget.value.height.toInt(),
           label: widget.rightLabel,
+          message: widget.message,
           onChanged: (value) {
             widget.onChanged(Size(widget.value.width, value.toDouble()));
           },
