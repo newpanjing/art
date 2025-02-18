@@ -131,8 +131,8 @@ class _ArtStickerViewState extends State<ArtStickerView> {
       left: (widget.size.width + offset.dx * 2) / 2 - offset.dx / 2,
       top: 0,
       child: Container(
-        width: offset.dx * 1.8,
-        height: offset.dx * 1.8,
+        width: offset.dx * 1.5,
+        height: offset.dx * 1.5,
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: Colors.blue, width: _borderWidth),
@@ -226,6 +226,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: Colors.blue, width: _borderWidth),
+            borderRadius: BorderRadius.circular(offset.dx),
             // borderRadius: BorderRadius.all(Radius.circular(offset / 2)),
           ),
           child: MouseRegion(
