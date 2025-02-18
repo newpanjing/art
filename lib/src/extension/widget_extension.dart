@@ -34,6 +34,14 @@ extension WidgetExtension on Widget {
     );
   }
 
+  //提示
+  Widget tooltip(String message) {
+    return Tooltip(
+      message: message,
+      child: this,
+    );
+  }
+
   Widget size({double? all, double? width, double? height}) {
     if (all != null) {
       return SizedBox(
@@ -92,7 +100,7 @@ extension WidgetExtension on Widget {
   Widget onTap(Function() onTap, {bool inkWell = true}) {
     if (inkWell) {
       return InkWell(
-        onTap: (){
+        onTap: () {
           //提供触感反馈
           HapticFeedback.lightImpact();
           onTap.call();
@@ -101,7 +109,7 @@ extension WidgetExtension on Widget {
       );
     }
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         //提供触感反馈
         HapticFeedback.lightImpact();
         onTap.call();
