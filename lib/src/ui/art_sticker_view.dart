@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:art/art.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -17,11 +18,13 @@ class ArtStickerView extends StatefulWidget {
   final VoidCallback? onSelected;
   final VoidCallback? onDelete;
   final double scale;
+  final ArtStickerController? controller;
 
   const ArtStickerView(
       {super.key,
       required this.child,
       required this.size,
+      this.controller,
       this.rotation = 0,
       this.position = Offset.zero,
       this.selected = false,
@@ -76,7 +79,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
 
   Widget _buildDrag({required Widget child}) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         //阻止点击事件
       },
       onDoubleTap: widget.onDoubleTap,
@@ -87,6 +90,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         _dragStart = details.globalPosition;
         _positionStart = widget.position;
         print("拖拽开始");
+        widget.controller?.onDragStart?.call();
       },
       onPanUpdate: (details) {
         if (_dragStart == null || _positionStart == null) return;
@@ -96,9 +100,12 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         widget.onPositionChanged
             ?.call(_positionStart! + scaledDelta, scaledDelta);
         print("拖拽中");
+        widget.controller?.onDragUpdate
+            ?.call(scaledDelta, _positionStart! + scaledDelta);
       },
       onPanEnd: (_) {
         widget.onEnd?.call();
+        widget.controller?.onDragEnd?.call();
         print("拖拽结束");
       },
       child: child,
