@@ -86,6 +86,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
       onPanStart: (details) {
         _dragStart = details.globalPosition;
         _positionStart = widget.position;
+        print("拖拽开始");
       },
       onPanUpdate: (details) {
         if (_dragStart == null || _positionStart == null) return;
@@ -94,9 +95,11 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         final scaledDelta = delta / widget.scale;
         widget.onPositionChanged
             ?.call(_positionStart! + scaledDelta, scaledDelta);
+        print("拖拽中");
       },
       onPanEnd: (_) {
         widget.onEnd?.call();
+        print("拖拽结束");
       },
       child: child,
     );
