@@ -76,7 +76,6 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         math.min(val.dx, _offset.dx * 2), math.min(val.dy, _offset.dy * 2));
     return val;
   }
-
   Widget _buildDrag({required Widget child}) {
     return GestureDetector(
       onTap: () {
