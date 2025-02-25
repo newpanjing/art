@@ -9,6 +9,7 @@ class ArtNumberInput extends StatefulWidget {
   final int max;
   final String label;
   final String message;
+  final bool slideControl;
 
   const ArtNumberInput(
       {super.key,
@@ -17,7 +18,8 @@ class ArtNumberInput extends StatefulWidget {
       this.value = 1,
       this.step = 1,
       this.label = "",
-        this.message="按住鼠标←→滑动调节",
+      this.slideControl = true,
+      this.message = "按住鼠标←→滑动调节",
       this.onChanged});
 
   @override
@@ -95,7 +97,12 @@ class _ArtNumberInputState extends State<ArtNumberInput> {
         border: Border.all(color: Colors.grey[300]!),
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Row(
+      child: _buildInput(),
+    );
+  }
+  Widget _buildInput() {
+    if(!widget.slideControl){
+      return Row(
         children: [
           TextField(
             focusNode: focusNode,
@@ -111,7 +118,7 @@ class _ArtNumberInputState extends State<ArtNumberInput> {
             onSubmitted: (value) {
               callback();
             },
-          ).width(50),
+          ).fill(),
           //添加一个上下调节的按钮
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -132,48 +139,88 @@ class _ArtNumberInputState extends State<ArtNumberInput> {
                 callback(step: -1);
               }),
             ],
+          )
+        ],
+      );
+    }
+    return Row(
+      children: [
+        TextField(
+          focusNode: focusNode,
+          controller: _controller,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 13),
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.zero,
+            isDense: true,
           ),
-          GestureDetector(
-            onHorizontalDragStart: (details) {
-              _isDragging = true;
-              _dragStartX = details.globalPosition.dx;
-              _dragStartValue = widget.value.toDouble();
-            },
-            onHorizontalDragUpdate: (details) => _handleDragUpdate(details),
-            onHorizontalDragEnd: (_) {
-              _isDragging = false;
-              _dragStartX = null;
-              _dragStartValue = null;
-            },
-            child: MouseRegion(
-              cursor: SystemMouseCursors.resizeLeftRight,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    left: BorderSide(color: Colors.grey[300]!),
+          onSubmitted: (value) {
+            callback();
+          },
+        ).width(50),
+        //添加一个上下调节的按钮
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.keyboard_arrow_up,
+              color: Colors.grey[400],
+              size: 14,
+            ).onTap(() {
+              callback(step: 1);
+            }),
+            Icon(
+              Icons.keyboard_arrow_down,
+              color: Colors.grey[400],
+              size: 14,
+            ).onTap(() {
+              callback(step: -1);
+            }),
+          ],
+        ),
+        GestureDetector(
+          onHorizontalDragStart: (details) {
+            _isDragging = true;
+            _dragStartX = details.globalPosition.dx;
+            _dragStartValue = widget.value.toDouble();
+          },
+          onHorizontalDragUpdate: (details) => _handleDragUpdate(details),
+          onHorizontalDragEnd: (_) {
+            _isDragging = false;
+            _dragStartX = null;
+            _dragStartValue = null;
+          },
+          child: MouseRegion(
+            cursor: SystemMouseCursors.resizeLeftRight,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  left: BorderSide(color: Colors.grey[300]!),
+                ),
+                color: _isDragging ? Colors.grey[100] : null,
+              ),
+              child: Tooltip(
+                message: widget.message,
+                child: widget.label.isEmpty
+                    ? Icon(Icons.compare_arrows_sharp,
+                    size: 13, color: Colors.grey[600])
+                    .center()
+                    .width(25)
+                    : Text(
+                  widget.label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
                   ),
-                  color: _isDragging ? Colors.grey[100] : null,
-                ),
-                child: Tooltip(
-                  message: widget.message,
-                  child: widget.label.isEmpty
-                      ? Icon(Icons.compare_arrows_sharp,
-                              size: 13, color: Colors.grey[600])
-                          .center()
-                          .width(25)
-                      : Text(
-                          widget.label,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ).center().width(25),
-                ),
+                ).center().width(25),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
