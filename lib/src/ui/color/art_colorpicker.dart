@@ -8,20 +8,21 @@ class ArtColorPicker extends StatefulWidget {
   final ValueChanged<Color> onColorChanged;
   final Size size;
   final Size iconSize;
+  final DecorationImage? decorationImage;
 
   const ArtColorPicker(
       {super.key,
       required this.initialColor,
       required this.onColorChanged,
       this.size = const Size(300, 300),
-      this.iconSize = const Size(25, 25)});
+      this.iconSize = const Size(25, 25),
+      this.decorationImage});
 
   @override
   State<ArtColorPicker> createState() => _ArtColorPickerState();
 }
 
 class _ArtColorPickerState extends State<ArtColorPicker> {
-
   @override
   void initState() {
     super.initState();
@@ -58,22 +59,33 @@ class _ArtColorPickerState extends State<ArtColorPicker> {
 
   @override
   Widget build(BuildContext context) {
-
     //一个30x30的card
     return Container(
-      padding: 2.padding,
+      padding: 1.padding,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey, width: 2),
         borderRadius: BorderRadius.circular(6),
       ),
-      child: AnimatedContainer(
-        duration: 100.ms,
-        width: widget.iconSize.width,
-        height: widget.iconSize.height,
-        decoration: BoxDecoration(
-          color: widget.initialColor,
-          borderRadius: BorderRadius.circular(4),
-        ),
+      child: Stack(
+        children: [
+          Container(
+            width: widget.iconSize.width,
+            height: widget.iconSize.height,
+            decoration: BoxDecoration(
+              image: widget.decorationImage,
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+          AnimatedContainer(
+            duration: 100.ms,
+            width: widget.iconSize.width,
+            height: widget.iconSize.height,
+            decoration: BoxDecoration(
+              color: widget.initialColor,
+              borderRadius: BorderRadius.circular(5),
+            ),
+          )
+        ],
       ),
     ).onTap(_showColorPicker);
   }
