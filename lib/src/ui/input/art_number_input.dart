@@ -10,7 +10,7 @@ class ArtNumberInput extends StatefulWidget {
   final String label;
   final String message;
   final bool slideControl;
-
+  final bool showButtons;
   const ArtNumberInput(
       {super.key,
       this.min = 0,
@@ -19,6 +19,7 @@ class ArtNumberInput extends StatefulWidget {
       this.step = 1,
       this.label = "",
       this.slideControl = true,
+      this.showButtons=true,
       this.message = "按住鼠标←→滑动调节",
       this.onChanged});
 
@@ -120,6 +121,7 @@ class _ArtNumberInputState extends State<ArtNumberInput> {
             },
           ).fill(),
           //添加一个上下调节的按钮
+          if(widget.showButtons)
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -161,6 +163,7 @@ class _ArtNumberInputState extends State<ArtNumberInput> {
           },
         ).width(50),
         //添加一个上下调节的按钮
+        if(widget.showButtons)
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
