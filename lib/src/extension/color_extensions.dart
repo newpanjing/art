@@ -45,4 +45,8 @@ extension ColorExtension on Color {
       1,
     );
   }
+  //是否透明
+  bool get isTransparent {
+    return alpha == 0;
+  }
 }
