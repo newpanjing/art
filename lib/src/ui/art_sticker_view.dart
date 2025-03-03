@@ -151,6 +151,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           onPanStart: (details) {
             _dragStart = details.globalPosition;
             _rotationStart = widget.rotation;
+            widget.controller?.onRotationStart?.call(_rotationStart?? 0);
           },
           onPanUpdate: (details) {
             if (_dragStart == null || _rotationStart == null) return;
@@ -218,6 +219,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           _positionStart = widget.position;
           _rotationStart = widget.rotation;
           _sizeStart = widget.size;
+          widget.controller?.onResizeStart?.call(_sizeStart??Size.zero);
         },
         onPanUpdate: (details) {
           if (_dragStart == null ||
