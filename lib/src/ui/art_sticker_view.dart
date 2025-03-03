@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:art/art.dart';
+import 'package:art/src/common/dashed_border_painter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -77,52 +78,74 @@ class _ArtStickerViewState extends State<ArtStickerView> {
     return val;
   }
   var isDown=false;
+  var isHover=false;
+
   Widget _buildDrag({required Widget child}) {
-    return Listener(
-      onPointerDown: (e){
-        isDown=true;
+    return MouseRegion(
+      onEnter: (event) {
+        if(widget.selected){
+          return;
+        }
+        setState(() {
+          isHover=true;
+          print("鼠标进入");
+        });
       },
-      onPointerUp: (e){
-        isDown=false;
+      onExit: (event) {
+        if(widget.selected){
+          return;
+        }
+        setState(() {
+          isHover=false;
+          print("鼠标离开");
+        });
       },
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () {
-          //阻止点击事件
+      child: Listener(
+        onPointerDown: (e){
+          isDown=true;
         },
-        onDoubleTap: widget.onDoubleTap,
-        onPanDown: (details) {
-          widget.onSelected?.call();
+        onPointerUp: (e){
+          isDown=false;
         },
-        onPanStart: (details) {
-          if(!isDown){
-            return;
-          }
-          _dragStart = details.globalPosition;
-          _positionStart = widget.position;
-          // print("拖拽开始");
-          widget.controller?.onDragStart?.call();
-        },
-        onPanUpdate: (details) {
-          if(!isDown){
-            return;
-          }
-          if (_dragStart == null || _positionStart == null) return;
-          final delta = details.globalPosition - _dragStart!;
-          // 移动时考虑缩放
-          final scaledDelta = delta / widget.scale;
-          widget.onPositionChanged
-              ?.call(_positionStart! + scaledDelta, scaledDelta);
-          // print("拖拽中");
-          widget.controller?.onDragUpdate
-              ?.call(scaledDelta, _positionStart! + scaledDelta);
-        },
-        onPanEnd: (_) {
-          widget.onEnd?.call();
-          widget.controller?.onDragEnd?.call();
-          // print("拖拽结束");
-        },
-        child: child,
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            //阻止点击事件
+          },
+          onDoubleTap: widget.onDoubleTap,
+          onPanDown: (details) {
+            widget.onSelected?.call();
+          },
+          onPanStart: (details) {
+            if(!isDown){
+              return;
+            }
+            _dragStart = details.globalPosition;
+            _positionStart = widget.position;
+            // print("拖拽开始");
+            widget.controller?.onDragStart?.call();
+          },
+          onPanUpdate: (details) {
+            if(!isDown){
+              return;
+            }
+            if (_dragStart == null || _positionStart == null) return;
+            final delta = details.globalPosition - _dragStart!;
+            // 移动时考虑缩放
+            final scaledDelta = delta / widget.scale;
+            widget.onPositionChanged
+                ?.call(_positionStart! + scaledDelta, scaledDelta);
+            // print("拖拽中");
+            widget.controller?.onDragUpdate
+                ?.call(scaledDelta, _positionStart! + scaledDelta);
+          },
+          onPanEnd: (_) {
+            widget.onEnd?.call();
+            widget.controller?.onDragEnd?.call();
+            // print("拖拽结束");
+          },
+          child: child,
+        ),
       ),
     );
   }
@@ -358,18 +381,39 @@ class _ArtStickerViewState extends State<ArtStickerView> {
   }
 
   Widget _buildBorder() {
+    Widget child=Container(
+      // width: widget.size.width,
+      // height: widget.size.height,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.blue, width: _borderWidth),
+      ),
+    );
+    if(isHover){
+      print("虚线边框");
+      //虚线边框
+      child=Container(
+        width: widget.size.width,
+        height: widget.size.height,
+        // decoration: BoxDecoration(
+        //   border: Border.all(color: Colors.blue, width: _borderWidth),
+        //   borderRadius: BorderRadius.circular(offset.dx),
+        // ),
+        child: CustomPaint(
+          painter: DashedBorderPainter(
+            strokeWidth: _borderWidth,
+            dashColor: Colors.blue,
+            dashLength: 10,
+          ),
+          child: child,
+        )
+      );
+    }
     return Positioned(
       left: offset.dx - _borderWidth,
       top: offset.dy - _borderWidth,
       width: widget.size.width + _borderWidth * 2,
       height: widget.size.height + _borderWidth * 2,
-      child: Container(
-        // width: widget.size.width,
-        // height: widget.size.height,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.blue, width: _borderWidth),
-        ),
-      ),
+      child: child,
     );
   }
 }
