@@ -76,39 +76,54 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         math.min(val.dx, _offset.dx * 2), math.min(val.dy, _offset.dy * 2));
     return val;
   }
+  var isDown=false;
   Widget _buildDrag({required Widget child}) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        //阻止点击事件
+    return Listener(
+      onPointerDown: (e){
+        isDown=true;
       },
-      onDoubleTap: widget.onDoubleTap,
-      onPanDown: (details) {
-        widget.onSelected?.call();
+      onPointerUp: (e){
+        isDown=false;
       },
-      onPanStart: (details) {
-        _dragStart = details.globalPosition;
-        _positionStart = widget.position;
-        // print("拖拽开始");
-        widget.controller?.onDragStart?.call();
-      },
-      onPanUpdate: (details) {
-        if (_dragStart == null || _positionStart == null) return;
-        final delta = details.globalPosition - _dragStart!;
-        // 移动时考虑缩放
-        final scaledDelta = delta / widget.scale;
-        widget.onPositionChanged
-            ?.call(_positionStart! + scaledDelta, scaledDelta);
-        // print("拖拽中");
-        widget.controller?.onDragUpdate
-            ?.call(scaledDelta, _positionStart! + scaledDelta);
-      },
-      onPanEnd: (_) {
-        widget.onEnd?.call();
-        widget.controller?.onDragEnd?.call();
-        // print("拖拽结束");
-      },
-      child: child,
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          //阻止点击事件
+        },
+        onDoubleTap: widget.onDoubleTap,
+        onPanDown: (details) {
+          widget.onSelected?.call();
+        },
+        onPanStart: (details) {
+          if(!isDown){
+            return;
+          }
+          _dragStart = details.globalPosition;
+          _positionStart = widget.position;
+          // print("拖拽开始");
+          widget.controller?.onDragStart?.call();
+        },
+        onPanUpdate: (details) {
+          if(!isDown){
+            return;
+          }
+          if (_dragStart == null || _positionStart == null) return;
+          final delta = details.globalPosition - _dragStart!;
+          // 移动时考虑缩放
+          final scaledDelta = delta / widget.scale;
+          widget.onPositionChanged
+              ?.call(_positionStart! + scaledDelta, scaledDelta);
+          // print("拖拽中");
+          widget.controller?.onDragUpdate
+              ?.call(scaledDelta, _positionStart! + scaledDelta);
+        },
+        onPanEnd: (_) {
+          widget.onEnd?.call();
+          widget.controller?.onDragEnd?.call();
+          // print("拖拽结束");
+        },
+        child: child,
+      ),
     );
   }
 
