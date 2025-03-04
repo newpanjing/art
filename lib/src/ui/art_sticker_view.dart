@@ -110,9 +110,9 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         });
       },
       onExit: (event) {
-        if (widget.selected) {
-          return;
-        }
+        // if (widget.selected) {
+        //   return;
+        // }
         setState(() {
           isHover = false;
         });
@@ -123,6 +123,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           // print("pos:${e.localPosition}");
 
           if (!isInnerReact(e.localPosition)) {
+            isDown = false;
             return;
           }
           isDown = true;
@@ -191,7 +192,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
               _buildBorder(),
               ..._buildResize(),
             ],
-            if (!widget.selected && isHover) _buildHoverBorder(),
+            _buildHoverBorder(),
           ],
         )),
       ),
@@ -405,6 +406,9 @@ class _ArtStickerViewState extends State<ArtStickerView> {
   }
 
   Widget _buildHoverBorder() {
+    if (widget.selected || !isHover) {
+      return SizedBox();
+    }
     return Positioned(
       left: offset.dx - _borderWidth,
       top: offset.dy - _borderWidth,
