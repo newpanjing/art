@@ -88,7 +88,6 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         }
         setState(() {
           isHover=true;
-          print("鼠标进入");
         });
       },
       onExit: (event) {
@@ -97,7 +96,6 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         }
         setState(() {
           isHover=false;
-          print("鼠标离开");
         });
       },
       child: Listener(
@@ -163,11 +161,14 @@ class _ArtStickerViewState extends State<ArtStickerView> {
             child: Stack(
           children: [
             Positioned(left: offset.dx, top: offset.dy, child: widget.child),
+
             if (widget.selected) ...[
               _buildRotate(),
               _buildBorder(),
               ..._buildResize(),
             ],
+            if(!widget.selected&&isHover)
+              _buildHoverBorder(),
           ],
         )),
       ),
@@ -380,40 +381,38 @@ class _ArtStickerViewState extends State<ArtStickerView> {
     ];
   }
 
-  Widget _buildBorder() {
-    Widget child=Container(
-      // width: widget.size.width,
-      // height: widget.size.height,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.blue, width: _borderWidth),
-      ),
-    );
-    if(isHover){
-      print("虚线边框");
-      //虚线边框
-      child=Container(
-        width: widget.size.width,
-        height: widget.size.height,
-        // decoration: BoxDecoration(
-        //   border: Border.all(color: Colors.blue, width: _borderWidth),
-        //   borderRadius: BorderRadius.circular(offset.dx),
-        // ),
-        child: CustomPaint(
-          painter: DashedBorderPainter(
-            strokeWidth: _borderWidth,
-            dashColor: Colors.blue,
-            dashLength: 10,
-          ),
-          child: child,
-        )
-      );
-    }
+  Widget _buildHoverBorder(){
     return Positioned(
       left: offset.dx - _borderWidth,
       top: offset.dy - _borderWidth,
       width: widget.size.width + _borderWidth * 2,
       height: widget.size.height + _borderWidth * 2,
-      child: child,
+      child: Container(
+          width: widget.size.width,
+          height: widget.size.height,
+          child: CustomPaint(
+            painter: DashedBorderPainter(
+              strokeWidth: _borderWidth,
+              dashColor: Color(0xff7835FF),
+              dashLength: 10,
+              dashSpace: 20
+            ),
+          )
+      ),
+    );
+  }
+
+  Widget _buildBorder() {
+    return Positioned(
+      left: offset.dx - _borderWidth,
+      top: offset.dy - _borderWidth,
+      width: widget.size.width + _borderWidth * 2,
+      height: widget.size.height + _borderWidth * 2,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.blue, width: _borderWidth),
+        ),
+      ),
     );
   }
 }
