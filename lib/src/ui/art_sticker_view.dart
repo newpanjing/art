@@ -77,33 +77,58 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         math.min(val.dx, _offset.dx * 2), math.min(val.dy, _offset.dy * 2));
     return val;
   }
-  var isDown=false;
-  var isHover=false;
+
+  var isDown = false;
+  var isHover = false;
+
+  bool isInnerReact(Offset localPosition) {
+    final react = Rect.fromLTWH(
+        offset.dx, offset.dy, widget.size.width, widget.size.height);
+
+    //判断是否在矩形内
+    return react.contains(localPosition);
+  }
 
   Widget _buildDrag({required Widget child}) {
     return MouseRegion(
-      onEnter: (event) {
-        if(widget.selected){
+      onEnter: (event) {},
+      onHover: (event) {
+        if (isHover) {
+          return;
+        }
+        if (widget.selected) {
+          return;
+        }
+        // print("event:${event.localPosition}");
+        var t = DateTime.now();
+        if (!isInnerReact(event.localPosition)) {
+          // print("耗时：${DateTime.now().difference(t).inMilliseconds}");
           return;
         }
         setState(() {
-          isHover=true;
+          isHover = true;
         });
       },
       onExit: (event) {
-        if(widget.selected){
+        if (widget.selected) {
           return;
         }
         setState(() {
-          isHover=false;
+          isHover = false;
         });
       },
       child: Listener(
-        onPointerDown: (e){
-          isDown=true;
+        onPointerDown: (e) {
+          //获取鼠标在元素的相对位置
+          // print("pos:${e.localPosition}");
+
+          if (!isInnerReact(e.localPosition)) {
+            return;
+          }
+          isDown = true;
         },
-        onPointerUp: (e){
-          isDown=false;
+        onPointerUp: (e) {
+          isDown = false;
         },
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
@@ -115,7 +140,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
             widget.onSelected?.call();
           },
           onPanStart: (details) {
-            if(!isDown){
+            if (!isDown) {
               return;
             }
             _dragStart = details.globalPosition;
@@ -124,7 +149,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
             widget.controller?.onDragStart?.call();
           },
           onPanUpdate: (details) {
-            if(!isDown){
+            if (!isDown) {
               return;
             }
             if (_dragStart == null || _positionStart == null) return;
@@ -161,14 +186,12 @@ class _ArtStickerViewState extends State<ArtStickerView> {
             child: Stack(
           children: [
             Positioned(left: offset.dx, top: offset.dy, child: widget.child),
-
             if (widget.selected) ...[
               _buildRotate(),
               _buildBorder(),
               ..._buildResize(),
             ],
-            if(!widget.selected&&isHover)
-              _buildHoverBorder(),
+            if (!widget.selected && isHover) _buildHoverBorder(),
           ],
         )),
       ),
@@ -191,7 +214,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           onPanStart: (details) {
             _dragStart = details.globalPosition;
             _rotationStart = widget.rotation;
-            widget.controller?.onRotationStart?.call(_rotationStart?? 0);
+            widget.controller?.onRotationStart?.call(_rotationStart ?? 0);
           },
           onPanUpdate: (details) {
             if (_dragStart == null || _rotationStart == null) return;
@@ -259,7 +282,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           _positionStart = widget.position;
           _rotationStart = widget.rotation;
           _sizeStart = widget.size;
-          widget.controller?.onResizeStart?.call(_sizeStart??Size.zero);
+          widget.controller?.onResizeStart?.call(_sizeStart ?? Size.zero);
         },
         onPanUpdate: (details) {
           if (_dragStart == null ||
@@ -381,7 +404,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
     ];
   }
 
-  Widget _buildHoverBorder(){
+  Widget _buildHoverBorder() {
     return Positioned(
       left: offset.dx - _borderWidth,
       top: offset.dy - _borderWidth,
@@ -392,13 +415,11 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           height: widget.size.height,
           child: CustomPaint(
             painter: DashedBorderPainter(
-              strokeWidth: _borderWidth,
-              dashColor: Color(0xff7835FF),
-              dashLength: 10,
-              dashSpace: 20
-            ),
-          )
-      ),
+                strokeWidth: _borderWidth,
+                dashColor: Color(0xff7835FF),
+                dashLength: 10,
+                dashSpace: 20),
+          )),
     );
   }
 
