@@ -6,6 +6,8 @@ showConfirmDialog({
   required String title,
   required String content,
   required Function() onConfirm,
+  String cancelText = "Cancel",
+  String confirmText = "OK",
 }) async {
   return showDialog(
     context: context,
@@ -18,7 +20,7 @@ showConfirmDialog({
             onPressed: () {
               context.back(false);
             },
-            child: Text('Cancel'),
+            child: Text(cancelText),
           ),
           FilledButton(
             onPressed: () {
@@ -28,7 +30,7 @@ showConfirmDialog({
             style: FilledButton.styleFrom(
               backgroundColor: Colors.redAccent,
             ),
-            child: Text('OK'),
+            child: Text(confirmText),
           ),
         ],
       );

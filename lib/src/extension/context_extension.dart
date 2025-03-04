@@ -6,24 +6,31 @@ extension ContextExtension on BuildContext {
     required String title,
     required String content,
     required Function() onConfirm,
+    String cancelText = "Cancel",
+    String confirmText = "OK",
   }) async {
     return showConfirmDialog(
+        cancelText: cancelText,
+        confirmText: confirmText,
         context: this, title: title, content: content, onConfirm: onConfirm);
   }
 
-  alert(String msg) {
+  alert(String msg,{
+    String title = "Tips",
+    String ok = "OK",
+  }) {
     showDialog(
         context: this,
         builder: (context) {
           return AlertDialog(
-            title: Text("提示"),
+            title: Text(title),
             content: Text(msg),
             actions: [
               TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text("确定"))
+                  child: Text(ok))
             ],
           );
         });
