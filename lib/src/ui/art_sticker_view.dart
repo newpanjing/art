@@ -99,10 +99,8 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         if (widget.selected) {
           return;
         }
-        // print("event:${event.localPosition}");
-        var t = DateTime.now();
+
         if (!isInnerReact(event.localPosition)) {
-          // print("耗时：${DateTime.now().difference(t).inMilliseconds}");
           return;
         }
         setState(() {

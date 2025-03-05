@@ -24,8 +24,8 @@ showConfirmDialog({
           ),
           FilledButton(
             onPressed: () {
-              onConfirm();
               context.back(true);
+              onConfirm();
             },
             style: FilledButton.styleFrom(
               backgroundColor: Colors.redAccent,
