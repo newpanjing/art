@@ -133,6 +133,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           behavior: HitTestBehavior.translucent,
           onTap: () {
             //阻止点击事件
+            // print("111");
           },
           onDoubleTap: widget.onDoubleTap,
           onPanDown: (details) {
