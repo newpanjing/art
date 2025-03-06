@@ -37,6 +37,10 @@ extension WidgetExtension on Widget {
   //提示
   Widget tooltip(String message) {
     return Tooltip(
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(4),
+      ),
       message: message,
       child: this,
     );
