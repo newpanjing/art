@@ -20,6 +20,7 @@ class ArtStickerView extends StatefulWidget {
   final VoidCallback? onDelete;
   final double scale;
   final ArtStickerController? controller;
+  final Color primaryColor;
 
   const ArtStickerView(
       {super.key,
@@ -36,6 +37,7 @@ class ArtStickerView extends StatefulWidget {
       this.onDelete,
       this.scale = 1,
       this.onEnd,
+      this.primaryColor = Colors.blue,
       this.onDoubleTap});
 
   @override
@@ -197,7 +199,9 @@ class _ArtStickerViewState extends State<ArtStickerView> {
       ),
     );
   }
-
+  Color get primaryColor{
+    return widget.primaryColor;
+  }
   Widget _buildRotate() {
     return Positioned(
       left: (widget.size.width + offset.dx * 2) / 2 - offset.dx / 2,
@@ -207,7 +211,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         height: offset.dx * 1.5,
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: Colors.blue, width: _borderWidth),
+          border: Border.all(color: primaryColor, width: _borderWidth),
           borderRadius: BorderRadius.circular(offset.dx),
         ),
         child: GestureDetector(
@@ -253,7 +257,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
               child: Icon(
                 CupertinoIcons.rotate_right,
                 size: offset.dx * 1.7 * 0.5,
-                color: Colors.blue,
+                color: primaryColor,
               ),
             ),
           ),
@@ -299,7 +303,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           height: offset.dx,
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Colors.blue, width: _borderWidth),
+            border: Border.all(color: primaryColor, width: _borderWidth),
             borderRadius: BorderRadius.circular(offset.dx),
             // borderRadius: BorderRadius.all(Radius.circular(offset / 2)),
           ),
@@ -419,7 +423,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           child: CustomPaint(
             painter: DashedBorderPainter(
                 strokeWidth: _borderWidth,
-                dashColor: Color(0xff7835FF),
+                dashColor: primaryColor,
                 dashLength: 10,
                 dashSpace: 20),
           )),
@@ -434,7 +438,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
       height: widget.size.height + _borderWidth * 2,
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.blue, width: _borderWidth),
+          border: Border.all(color: primaryColor, width: _borderWidth),
         ),
       ),
     );
