@@ -9,8 +9,10 @@ class ArtNumberInput extends StatefulWidget {
   final int max;
   final String label;
   final String message;
-  final bool slideControl;
   final bool showButtons;
+  final Color? backgroundColor;
+  final Color? borderColor;
+
   const ArtNumberInput(
       {super.key,
       this.min = 0,
@@ -18,10 +20,11 @@ class ArtNumberInput extends StatefulWidget {
       this.value = 1,
       this.step = 1,
       this.label = "",
-      this.slideControl = true,
-      this.showButtons=true,
+      this.showButtons = true,
       this.message = "按住鼠标←→滑动调节",
-      this.onChanged});
+      this.onChanged,
+      this.backgroundColor,
+      this.borderColor});
 
   @override
   State<ArtNumberInput> createState() => _ArtNumberInputState();
@@ -34,12 +37,16 @@ class _ArtNumberInputState extends State<ArtNumberInput> {
   bool _isDragging = false;
   late TextEditingController _controller;
   var focusNode = FocusNode();
-
+  var isHover = false;
+  var isFocus = false;
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.value.toStringAsFixed(0));
     focusNode.addListener(() {
+      setState(() {
+        isFocus=focusNode.hasFocus;
+      });
       if (!focusNode.hasFocus) {
         callback();
       }
@@ -91,37 +98,89 @@ class _ArtNumberInputState extends State<ArtNumberInput> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-          maxWidth: 92, minWidth: 92, maxHeight: 30, minHeight: 30),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(4),
+    var theme = Theme.of(context);
+    var bg = widget.backgroundColor ?? theme.scaffoldBackgroundColor;
+    if (isHover) {
+      bg = bg.withOpacity(0.8);
+    }
+    var borderColor=widget.borderColor ?? Colors.transparent;
+    if(isFocus){
+      borderColor=theme.primaryColor;
+    }
+    return MouseRegion(
+      onEnter: (event) {
+        setState(() {
+          isHover = true;
+        });
+      },
+      onExit: (event) {
+        setState(() {
+          isHover = false;
+        });
+      },
+      child: Container(
+        constraints: BoxConstraints(
+            maxWidth: 92, minWidth: 92, maxHeight: 30, minHeight: 30),
+        decoration: BoxDecoration(
+          color: bg,
+          border: Border.all(color: borderColor),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: _buildInput(),
       ),
-      child: _buildInput(),
     );
   }
+
+  Widget _buildDragArea(Widget child) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.resizeLeftRight,
+      child: GestureDetector(
+        onPanStart: (details) {
+          _dragStartX = details.globalPosition.dx;
+          _dragStartValue =
+              double.tryParse(_controller.text.replaceAll("\r|\t|\n", "")) ??
+                  1.0;
+          _isDragging = true;
+        },
+        onPanUpdate: _handleDragUpdate,
+        onPanEnd: (details) {
+          _isDragging = false;
+        },
+        child: child,
+      ),
+    );
+  }
+
   Widget _buildInput() {
-    if(!widget.slideControl){
-      return Row(
-        children: [
-          TextField(
-            focusNode: focusNode,
-            controller: _controller,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13),
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
-              isDense: true,
-            ),
-            onSubmitted: (value) {
-              callback();
-            },
-          ).fill(),
-          //添加一个上下调节的按钮
-          if(widget.showButtons)
+    return Row(
+      children: [
+        TextField(
+          focusNode: focusNode,
+          controller: _controller,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 13),
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.zero,
+            isDense: true,
+          ),
+          onSubmitted: (value) {
+            callback();
+          },
+        ).fill(),
+        if (widget.label.isNotEmpty)
+          _buildDragArea(
+            SizedBox(
+              width: 10,
+              child: Text(
+                widget.label,
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ).tooltip(widget.message),
+          ),
+        //添加一个上下调节的按钮
+        if (widget.showButtons && isHover)
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -141,88 +200,11 @@ class _ArtNumberInputState extends State<ArtNumberInput> {
                 callback(step: -1);
               }),
             ],
+          ).width(20),
+        if (widget.showButtons && !isHover)
+          SizedBox(
+            width: 20,
           )
-        ],
-      );
-    }
-    return Row(
-      children: [
-        TextField(
-          focusNode: focusNode,
-          controller: _controller,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 13),
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.zero,
-            isDense: true,
-          ),
-          onSubmitted: (value) {
-            callback();
-          },
-        ).width(50),
-        //添加一个上下调节的按钮
-        if(widget.showButtons)
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.keyboard_arrow_up,
-              color: Colors.grey[400],
-              size: 14,
-            ).onTap(() {
-              callback(step: 1);
-            }),
-            Icon(
-              Icons.keyboard_arrow_down,
-              color: Colors.grey[400],
-              size: 14,
-            ).onTap(() {
-              callback(step: -1);
-            }),
-          ],
-        ),
-        GestureDetector(
-          onHorizontalDragStart: (details) {
-            _isDragging = true;
-            _dragStartX = details.globalPosition.dx;
-            _dragStartValue = widget.value.toDouble();
-          },
-          onHorizontalDragUpdate: (details) => _handleDragUpdate(details),
-          onHorizontalDragEnd: (_) {
-            _isDragging = false;
-            _dragStartX = null;
-            _dragStartValue = null;
-          },
-          child: MouseRegion(
-            cursor: SystemMouseCursors.resizeLeftRight,
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  left: BorderSide(color: Colors.grey[300]!),
-                ),
-                color: _isDragging ? Colors.grey[100] : null,
-              ),
-              child: Tooltip(
-                message: widget.message,
-                child: widget.label.isEmpty
-                    ? Icon(Icons.compare_arrows_sharp,
-                    size: 13, color: Colors.grey[600])
-                    .center()
-                    .width(25)
-                    : Text(
-                  widget.label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ).center().width(25),
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }
