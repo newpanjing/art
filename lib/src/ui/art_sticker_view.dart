@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:art/art.dart';
 import 'package:art/src/common/dashed_border_painter.dart';
+import 'package:art/src/common/resize_direction.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -178,7 +179,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
 
   @override
   Widget build(BuildContext context) {
-    var _pos=offset;
+    var _pos = offset;
     return Positioned(
       left: widget.position.dx - _pos.dx,
       top: widget.position.dy - _pos.dy,
@@ -210,11 +211,11 @@ class _ArtStickerViewState extends State<ArtStickerView> {
   }
 
   List<Widget> _buildBorderLine() {
-    var lineWidth= _borderWidth;
-    var x=offset.dx;
-    var y=offset.dy;
+    var lineWidth = _borderWidth;
+    var x = offset.dx;
+    var y = offset.dy;
 
-    var lines=<Widget>[
+    var lines = <Widget>[
       Positioned(
         left: x,
         top: y,
@@ -322,18 +323,36 @@ class _ArtStickerViewState extends State<ArtStickerView> {
   }
 
   Widget _buildResizeIcon({
-    double? left,
-    double? bottom,
-    double? top,
-    double? right,
+    required ResizeDirection direction,
     MouseCursor cursor = SystemMouseCursors.precise,
     required Function(Offset) onMove,
   }) {
+    var w = 18.0 / widget.scale;
+    //限制在最小15和最大50之间
+    w = w.clamp(15, 80);
+
+    var x = 0.0, y = 0.0;
+    switch (direction) {
+      case ResizeDirection.tl:
+        x = offset.dx - w / 2;
+        y = offset.dy - w / 2;
+        break;
+      case ResizeDirection.tr:
+        x = widget.size.width + offset.dx - w / 2;
+        y = offset.dy - w / 2;
+        break;
+      case ResizeDirection.bl:
+        x = offset.dx - w / 2;
+        y = widget.size.height + offset.dy - w / 2;
+        break;
+      case ResizeDirection.br:
+        x = widget.size.width + offset.dx - w / 2;
+        y = widget.size.height + offset.dy - w / 2;
+    }
+
     return Positioned(
-      left: left,
-      top: top,
-      bottom: bottom,
-      right: right,
+      left: x,
+      top: y,
       child: GestureDetector(
         behavior: HitTestBehavior.translucent, // 允许透明区域捕获鼠标事件
         onPanStart: (details) {
@@ -354,13 +373,12 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           onMove(offset);
         },
         child: Container(
-          width: offset.dx,
-          height: offset.dx,
+          width: w,
+          height: w,
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: primaryColor, width: _borderWidth),
-            borderRadius: BorderRadius.circular(offset.dx),
-            // borderRadius: BorderRadius.all(Radius.circular(offset / 2)),
+            borderRadius: BorderRadius.circular(w),
           ),
           child: MouseRegion(
             cursor: cursor,
@@ -375,13 +393,13 @@ class _ArtStickerViewState extends State<ArtStickerView> {
   }
 
   List<Widget> _buildResize() {
-    var x = offset.dx / 2;
-    var y = offset.dy - offset.dx / 2;
+    var w = 18 * widget.scale;
+    var x = (w / 2);
+    var y = (w - w / 2);
     return [
       // 左上角
       _buildResizeIcon(
-        left: x,
-        top: y,
+        direction: ResizeDirection.tl,
         onMove: (offset) {
           // 计算新的位置
           final newPosition = _positionStart! + offset;
@@ -400,8 +418,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         },
       ),
       _buildResizeIcon(
-        left: x,
-        bottom: y,
+        direction: ResizeDirection.bl,
         onMove: (offset) {
           // 计算新的位置 - 只需要更新x坐标，因为是左下角
           final pos =
@@ -431,8 +448,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
       ),
       // 右上角
       _buildResizeIcon(
-        right: x,
-        top: y,
+        direction: ResizeDirection.tr,
         onMove: (offset) {
           //右上角需要更新y
           final pos =
@@ -448,8 +464,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         },
       ),
       _buildResizeIcon(
-        right: x,
-        bottom: y,
+        direction: ResizeDirection.br,
         onMove: (offset) {
           var size = Size(
               _sizeStart!.width + offset.dx, _sizeStart!.height + offset.dy);
