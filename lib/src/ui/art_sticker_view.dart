@@ -218,16 +218,19 @@ class _ArtStickerViewState extends State<ArtStickerView> {
   }
 
   Widget _buildRotate() {
+    var w=50/widget.scale;
+    w=w.clamp(30, 80 );
+
     return Positioned(
-      left: (widget.size.width + offset.dx * 2) / 2 - offset.dx / 2,
+      left: (widget.size.width + offset.dx * 2) / 2 - w / 2,
       top: 0,
       child: Container(
-        width: offset.dx * 1.5,
-        height: offset.dx * 1.5,
+        width: w,
+        height: w,
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: primaryColor, width: _borderWidth),
-          borderRadius: BorderRadius.circular(offset.dx),
+          borderRadius: BorderRadius.circular(w),
         ),
         child: GestureDetector(
           onPanStart: (details) {
@@ -272,7 +275,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
               cursor: SystemMouseCursors.click,
               child: Icon(
                 CupertinoIcons.rotate_right,
-                size: offset.dx * 1.7 * 0.5,
+                size: w*0.6,
                 color: primaryColor,
               ),
             ),
