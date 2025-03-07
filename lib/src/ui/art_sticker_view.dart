@@ -82,116 +82,76 @@ class _ArtStickerViewState extends State<ArtStickerView> {
   }
 
   var isDown = false;
-  var isHover = false;
-
-  bool isInnerReact(Offset localPosition) {
-    final react = Rect.fromLTWH(
-        offset.dx, offset.dy, widget.size.width, widget.size.height);
-
-    //判断是否在矩形内
-    return react.contains(localPosition);
-  }
+  var isHover = ValueNotifier(false);
 
   Widget _buildDrag({required Widget child}) {
-    return MouseRegion(
-      onEnter: (event) {},
-      onHover: (event) {
-        if (isHover) {
-          return;
-        }
-        if (widget.selected) {
-          return;
-        }
-        //
-        // if (!isInnerReact(event.localPosition)) {
-        //   return;
-        // }
-        setState(() {
-          isHover = true;
-        });
-      },
-      onExit: (event) {
-        // if (widget.selected) {
-        //   return;
-        // }
-        setState(() {
-          isHover = false;
-        });
-      },
-      child: Listener(
-        onPointerDown: (e) {
-          //获取鼠标在元素的相对位置
-          // print("pos:${e.localPosition}");
 
-          // if (!isInnerReact(e.localPosition)) {
-          //   isDown = false;
+    return Listener(
+
+      onPointerDown: (e) {
+        isDown = true;
+      },
+      onPointerUp: (e) {
+        isDown = false;
+      },
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          //阻止点击事件
+        },
+        onDoubleTap: widget.onDoubleTap,
+        onPanDown: (details) {
+          widget.onSelected?.call();
+        },
+        onPanStart: (details) {
+          // print("start:$isDown");
+          if (!isDown) {
+            return;
+          }
+          _dragStart = details.globalPosition;
+          _positionStart = widget.position;
+          // print("拖拽开始");
+          widget.controller?.onDragStart?.call();
+        },
+        onPanUpdate: (details) {
+          // if (!isDown) {
           //   return;
           // }
-          isDown = true;
+          if (_dragStart == null || _positionStart == null) return;
+          final delta = details.globalPosition - _dragStart!;
+          // 移动时考虑缩放
+          final scaledDelta = delta / widget.scale;
+          widget.onPositionChanged
+              ?.call(_positionStart! + scaledDelta, scaledDelta);
+          // print("拖拽中");
+          widget.controller?.onDragUpdate
+              ?.call(scaledDelta, _positionStart! + scaledDelta);
         },
-        onPointerUp: (e) {
-          isDown = false;
+        onPanEnd: (_) {
+          widget.onEnd?.call();
+          widget.controller?.onDragEnd?.call();
+          // print("拖拽结束");
         },
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            //阻止点击事件
-            print("111");
-          },
-          onDoubleTap: widget.onDoubleTap,
-          onPanDown: (details) {
-            widget.onSelected?.call();
-          },
-          onPanStart: (details) {
-            // print("start:$isDown");
-            if (!isDown) {
-              return;
-            }
-            _dragStart = details.globalPosition;
-            _positionStart = widget.position;
-            // print("拖拽开始");
-            widget.controller?.onDragStart?.call();
-          },
-          onPanUpdate: (details) {
-            // if (!isDown) {
-            //   return;
-            // }
-            if (_dragStart == null || _positionStart == null) return;
-            final delta = details.globalPosition - _dragStart!;
-            // 移动时考虑缩放
-            final scaledDelta = delta / widget.scale;
-            widget.onPositionChanged
-                ?.call(_positionStart! + scaledDelta, scaledDelta);
-            // print("拖拽中");
-            widget.controller?.onDragUpdate
-                ?.call(scaledDelta, _positionStart! + scaledDelta);
-          },
-          onPanEnd: (_) {
-            widget.onEnd?.call();
-            widget.controller?.onDragEnd?.call();
-            // print("拖拽结束");
-          },
-          child: Container(color: Colors.red, child: child),
-        ),
+        child: child,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    var _pos = offset;
+    var pos = offset;
     return Positioned(
-      left: widget.position.dx - _pos.dx,
-      top: widget.position.dy - _pos.dy,
-      width: widget.size.width + _pos.dx * 2,
-      height: widget.size.height + _pos.dy * 2,
+      left: widget.position.dx - pos.dx,
+      top: widget.position.dy - pos.dy,
+      width: widget.size.width + pos.dx * 2,
+      height: widget.size.height + pos.dy * 2,
       child: Transform.rotate(
         angle: widget.rotation * math.pi / 180,
         child: Stack(
           children: [
             Positioned(
-                left: _pos.dx,
-                top: _pos.dy,
+                left: pos.dx,
+                top: pos.dy,
                 child: _buildDrag(child: widget.child)),
             if (widget.selected) ...[
               _buildRotate(),
@@ -479,38 +439,25 @@ class _ArtStickerViewState extends State<ArtStickerView> {
   }
 
   Widget _buildHoverBorder() {
-    if (widget.selected || !isHover) {
-      return SizedBox();
-    }
-    return Positioned(
-      left: offset.dx - _borderWidth,
-      top: offset.dy - _borderWidth,
-      width: widget.size.width + _borderWidth * 2,
-      height: widget.size.height + _borderWidth * 2,
-      child: Container(
-          width: widget.size.width,
-          height: widget.size.height,
-          child: CustomPaint(
-            painter: DashedBorderPainter(
-                strokeWidth: _borderWidth,
-                dashColor: primaryColor,
-                dashLength: 10,
-                dashSpace: 20),
-          )),
-    );
+
+    return ValueListenableBuilder(valueListenable: isHover, builder: (context,value,child){
+      if(!value||widget.selected){
+        return SizedBox();
+      }
+      return Positioned(
+        left: offset.dx - _borderWidth,
+        top: offset.dy - _borderWidth,
+        width: widget.size.width + _borderWidth * 2,
+        height: widget.size.height + _borderWidth * 2,
+        child: CustomPaint(
+          painter: DashedBorderPainter(
+              strokeWidth: _borderWidth,
+              dashColor: primaryColor,
+              dashLength: 10,
+              dashSpace: 20),
+        ),
+      );
+    });
   }
 
-  Widget _buildBorder() {
-    return Positioned(
-      left: offset.dx - _borderWidth,
-      top: offset.dy - _borderWidth,
-      width: widget.size.width + _borderWidth * 2,
-      height: widget.size.height + _borderWidth * 2,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: primaryColor, width: _borderWidth),
-        ),
-      ),
-    );
-  }
 }
