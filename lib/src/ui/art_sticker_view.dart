@@ -159,7 +159,8 @@ class _ArtStickerViewState extends State<ArtStickerView> {
               ..._buildResize(),
             ],
             // _buildBorder(),
-            _buildHoverBorder(),
+            // _buildHoverBorder(),
+
           ],
         ),
       ),
