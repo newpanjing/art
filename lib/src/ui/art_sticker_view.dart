@@ -101,10 +101,10 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         if (widget.selected) {
           return;
         }
-
-        if (!isInnerReact(event.localPosition)) {
-          return;
-        }
+        //
+        // if (!isInnerReact(event.localPosition)) {
+        //   return;
+        // }
         setState(() {
           isHover = true;
         });
@@ -122,26 +122,27 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           //获取鼠标在元素的相对位置
           // print("pos:${e.localPosition}");
 
-          if (!isInnerReact(e.localPosition)) {
-            isDown = false;
-            return;
-          }
+          // if (!isInnerReact(e.localPosition)) {
+          //   isDown = false;
+          //   return;
+          // }
           isDown = true;
         },
         onPointerUp: (e) {
           isDown = false;
         },
         child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
+          behavior: HitTestBehavior.opaque,
           onTap: () {
             //阻止点击事件
-            // print("111");
+            print("111");
           },
           onDoubleTap: widget.onDoubleTap,
           onPanDown: (details) {
             widget.onSelected?.call();
           },
           onPanStart: (details) {
+            // print("start:$isDown");
             if (!isDown) {
               return;
             }
@@ -151,9 +152,9 @@ class _ArtStickerViewState extends State<ArtStickerView> {
             widget.controller?.onDragStart?.call();
           },
           onPanUpdate: (details) {
-            if (!isDown) {
-              return;
-            }
+            // if (!isDown) {
+            //   return;
+            // }
             if (_dragStart == null || _positionStart == null) return;
             final delta = details.globalPosition - _dragStart!;
             // 移动时考虑缩放
@@ -169,7 +170,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
             widget.controller?.onDragEnd?.call();
             // print("拖拽结束");
           },
-          child: child,
+          child: Container(color: Colors.red, child: child),
         ),
       ),
     );
@@ -177,31 +178,84 @@ class _ArtStickerViewState extends State<ArtStickerView> {
 
   @override
   Widget build(BuildContext context) {
+    var _pos=offset;
     return Positioned(
-      left: widget.position.dx - offset.dx,
-      top: widget.position.dy - offset.dy,
-      width: widget.size.width + offset.dx * 2,
-      height: widget.size.height + offset.dy * 2,
+      left: widget.position.dx - _pos.dx,
+      top: widget.position.dy - _pos.dy,
+      width: widget.size.width + _pos.dx * 2,
+      height: widget.size.height + _pos.dy * 2,
       child: Transform.rotate(
         angle: widget.rotation * math.pi / 180,
-        child: _buildDrag(
-            child: Stack(
+        child: Stack(
           children: [
-            Positioned(left: offset.dx, top: offset.dy, child: widget.child),
+            Positioned(
+                left: _pos.dx,
+                top: _pos.dy,
+                child: _buildDrag(child: widget.child)),
             if (widget.selected) ...[
               _buildRotate(),
-              _buildBorder(),
+              ..._buildBorderLine(),
               ..._buildResize(),
             ],
+            // _buildBorder(),
             _buildHoverBorder(),
           ],
-        )),
+        ),
       ),
     );
   }
-  Color get primaryColor{
+
+  Color get primaryColor {
     return widget.primaryColor;
   }
+
+  List<Widget> _buildBorderLine() {
+    var lineWidth= _borderWidth;
+    var x=offset.dx;
+    var y=offset.dy;
+
+    var lines=<Widget>[
+      Positioned(
+        left: x,
+        top: y,
+        width: lineWidth,
+        height: widget.size.height,
+        child: Container(
+          color: primaryColor,
+        ),
+      ),
+      Positioned(
+        left: x,
+        top: y,
+        width: widget.size.width,
+        height: lineWidth,
+        child: Container(
+          color: primaryColor,
+        ),
+      ),
+      Positioned(
+        left: x + widget.size.width,
+        top: y,
+        width: lineWidth,
+        height: widget.size.height,
+        child: Container(
+          color: primaryColor,
+        ),
+      ),
+      Positioned(
+        left: x,
+        top: y + widget.size.height,
+        width: widget.size.width,
+        height: lineWidth,
+        child: Container(
+          color: primaryColor,
+        ),
+      ),
+    ];
+
+    return lines;
+  }
+
   Widget _buildRotate() {
     return Positioned(
       left: (widget.size.width + offset.dx * 2) / 2 - offset.dx / 2,
