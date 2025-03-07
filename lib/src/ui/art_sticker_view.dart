@@ -252,6 +252,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           },
           child: Tooltip(
             message: '旋转',
+            decoration: Theme.of(context).tooltipTheme.decoration,
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: Icon(

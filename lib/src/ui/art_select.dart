@@ -123,6 +123,7 @@ class _ArtSelectState<T> extends State<ArtSelect<T>> {
     _overlayEntry = null;
   }
 
+  Color get primaryColor => Theme.of(context).primaryColor;
   @override
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
@@ -138,7 +139,7 @@ class _ArtSelectState<T> extends State<ArtSelect<T>> {
             padding: EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               border: Border.all(
-                color: _isHovered || _isOpen ? Colors.blue : Colors.grey[300]!,
+                color: _isHovered || _isOpen ? primaryColor : Colors.grey[300]!,
               ),
               borderRadius: BorderRadius.circular(4),
             ),
@@ -200,6 +201,8 @@ class _SelectItem<T> extends StatefulWidget {
 class _SelectItemState<T> extends State<_SelectItem<T>> {
   bool _isHovered = false;
 
+  Color get primaryColor => Theme.of(context).primaryColor;
+
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
@@ -228,7 +231,7 @@ class _SelectItemState<T> extends State<_SelectItem<T>> {
                     ),
               ),
               if (widget.isSelected)
-                Icon(Icons.check, size: 16, color: Colors.blue),
+                Icon(Icons.check, size: 16, color: primaryColor),
             ],
           ),
         ),
