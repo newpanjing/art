@@ -85,9 +85,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
   var isHover = ValueNotifier(false);
 
   Widget _buildDrag({required Widget child}) {
-
     return Listener(
-
       onPointerDown: (e) {
         isDown = true;
       },
@@ -160,7 +158,6 @@ class _ArtStickerViewState extends State<ArtStickerView> {
             ],
             // _buildBorder(),
             // _buildHoverBorder(),
-
           ],
         ),
       ),
@@ -219,8 +216,8 @@ class _ArtStickerViewState extends State<ArtStickerView> {
   }
 
   Widget _buildRotate() {
-    var w=50/widget.scale;
-    w=w.clamp(30, 80 );
+    var w = 50 / widget.scale;
+    w = w.clamp(30, 80);
 
     return Positioned(
       left: (widget.size.width + offset.dx * 2) / 2 - w / 2,
@@ -276,7 +273,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
               cursor: SystemMouseCursors.click,
               child: Icon(
                 CupertinoIcons.rotate_right,
-                size: w*0.6,
+                size: w * 0.6,
                 color: primaryColor,
               ),
             ),
@@ -288,14 +285,17 @@ class _ArtStickerViewState extends State<ArtStickerView> {
 
   Widget _buildResizeIcon({
     required ResizeDirection direction,
-    MouseCursor cursor = SystemMouseCursors.precise,
     required Function(Offset) onMove,
   }) {
-    var w = 18.0 / widget.scale;
+    var w = 15.0 / widget.scale;
     //限制在最小15和最大50之间
-    w = w.clamp(15, 80);
-
+    w = w.clamp(10, 50 );
+    var _bw=_borderWidth/2;
+    var cursor = SystemMouseCursors.precise;
     var x = 0.0, y = 0.0;
+    //l,r,t,b 宽度/高度
+    var sideWidth = 20/widget.scale;
+
     switch (direction) {
       case ResizeDirection.tl:
         x = offset.dx - w / 2;
@@ -312,7 +312,31 @@ class _ArtStickerViewState extends State<ArtStickerView> {
       case ResizeDirection.br:
         x = widget.size.width + offset.dx - w / 2;
         y = widget.size.height + offset.dy - w / 2;
+        break;
+      case ResizeDirection.t:
+        x = widget.size.width / 2 + offset.dx - w / 2;
+        y = offset.dy - w / 2;
+        cursor = SystemMouseCursors.resizeUpDown;
+        break;
+      case ResizeDirection.b:
+        x = widget.size.width / 2 + offset.dx - w / 2;
+        y = widget.size.height + offset.dy - w / 2;
+        cursor = SystemMouseCursors.resizeUpDown;
+        break;
+      case ResizeDirection.l:
+        x = offset.dx - w / 2;
+        y = widget.size.height / 2 + offset.dy - w / 2;
+        cursor = SystemMouseCursors.resizeLeftRight;
+        break;
+      case ResizeDirection.r:
+        x = widget.size.width + offset.dx - w / 2;
+        y = widget.size.height / 2 + offset.dy - w / 2;
+        cursor = SystemMouseCursors.resizeLeftRight;
+        break;
     }
+    //边框线的宽度
+    x+=_bw;
+    y+=_bw;
 
     return Positioned(
       left: x,
@@ -341,7 +365,8 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           height: w,
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Color(0xffCCCCCC), width: _borderWidth*0.65 ),
+            border: Border.all(
+                color: Color(0xffCCCCCC), width: _borderWidth * 0.45),
             borderRadius: BorderRadius.circular(w),
           ),
           child: MouseRegion(
@@ -357,9 +382,6 @@ class _ArtStickerViewState extends State<ArtStickerView> {
   }
 
   List<Widget> _buildResize() {
-    var w = 18 * widget.scale;
-    var x = (w / 2);
-    var y = (w - w / 2);
     return [
       // 左上角
       _buildResizeIcon(
@@ -439,29 +461,84 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           widget.onSizeChanged?.call(size, value);
         },
       ),
+      //l,t,r,b
+      _buildResizeIcon(
+        direction: ResizeDirection.l,
+        onMove: (offset) {
+          //改变size和pos
+          final pos =
+              Offset(_positionStart!.dx + offset.dx, _positionStart!.dy);
+          widget.onPositionChanged?.call(pos, offset);
+          var size = Size(_sizeStart!.width - offset.dx, _sizeStart!.height);
+          if (size.width < 10 || size.height < 10) {
+            return;
+          }
+          var width = _sizeStart!.width - size.width;
+          var value = Size(width, _sizeStart!.height);
+          widget.onSizeChanged?.call(size, value);
+        },
+      ),
+      //right
+      _buildResizeIcon(
+        direction: ResizeDirection.r,
+        onMove: (offset) {
+          var size = Size(_sizeStart!.width + offset.dx, _sizeStart!.height);
+          if (size.width < 10 || size.height < 10) {
+            return;
+          }
+          widget.onSizeChanged?.call(size, Size.zero);
+        },
+      ),
+      //top
+      _buildResizeIcon(
+          direction: ResizeDirection.t,
+          onMove: (offset) {
+            //改变size和pos
+            final pos =
+                Offset(_positionStart!.dx, _positionStart!.dy + offset.dy);
+            widget.onPositionChanged?.call(pos, offset);
+            var size = Size(_sizeStart!.width, _sizeStart!.height - offset.dy);
+            if (size.width < 10 || size.height < 10) {
+              return;
+            }
+            var height = _sizeStart!.height - size.height;
+            var value = Size(_sizeStart!.width, height);
+            widget.onSizeChanged?.call(size, value);
+          }),
+      //bottom
+      _buildResizeIcon(
+        direction: ResizeDirection.b,
+        onMove: (offset) {
+          var size = Size(_sizeStart!.width, _sizeStart!.height + offset.dy);
+          if (size.width < 10 || size.height < 10) {
+            return;
+          }
+          widget.onSizeChanged?.call(size, Size.zero);
+        },
+      ),
     ];
   }
 
   Widget _buildHoverBorder() {
-
-    return ValueListenableBuilder(valueListenable: isHover, builder: (context,value,child){
-      if(!value||widget.selected){
-        return SizedBox();
-      }
-      return Positioned(
-        left: offset.dx - _borderWidth,
-        top: offset.dy - _borderWidth,
-        width: widget.size.width + _borderWidth * 2,
-        height: widget.size.height + _borderWidth * 2,
-        child: CustomPaint(
-          painter: DashedBorderPainter(
-              strokeWidth: _borderWidth,
-              dashColor: primaryColor,
-              dashLength: 10,
-              dashSpace: 20),
-        ),
-      );
-    });
+    return ValueListenableBuilder(
+        valueListenable: isHover,
+        builder: (context, value, child) {
+          if (!value || widget.selected) {
+            return SizedBox();
+          }
+          return Positioned(
+            left: offset.dx - _borderWidth,
+            top: offset.dy - _borderWidth,
+            width: widget.size.width + _borderWidth * 2,
+            height: widget.size.height + _borderWidth * 2,
+            child: CustomPaint(
+              painter: DashedBorderPainter(
+                  strokeWidth: _borderWidth,
+                  dashColor: primaryColor,
+                  dashLength: 10,
+                  dashSpace: 20),
+            ),
+          );
+        });
   }
-
 }

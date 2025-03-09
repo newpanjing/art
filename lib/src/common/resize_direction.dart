@@ -2,5 +2,9 @@ enum ResizeDirection {
   tl,
   tr,
   bl,
-  br
+  br,
+  l,
+  t,
+  b,
+  r
 }
