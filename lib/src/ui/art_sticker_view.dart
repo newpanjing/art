@@ -217,7 +217,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
 
   Widget _buildRotate() {
     var w = 50 / widget.scale;
-    w = w.clamp(30, 80);
+    w = w.clamp(40 , 60);
 
     return Positioned(
       left: (widget.size.width + offset.dx * 2) / 2 - w / 2,
@@ -227,7 +227,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         height: w,
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: primaryColor, width: _borderWidth),
+          border: Border.all(color: primaryColor, width: _borderWidth*0.5),
           borderRadius: BorderRadius.circular(w),
         ),
         child: GestureDetector(
@@ -267,7 +267,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
             widget.onRotationChanged?.call(newRotation);
           },
           child: Tooltip(
-            message: '旋转',
+            message: 'rotate',
             decoration: Theme.of(context).tooltipTheme.decoration,
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
