@@ -341,7 +341,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           height: w,
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: primaryColor, width: _borderWidth),
+            border: Border.all(color: Color(0xffCCCCCC), width: _borderWidth*0.65 ),
             borderRadius: BorderRadius.circular(w),
           ),
           child: MouseRegion(
