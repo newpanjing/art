@@ -289,12 +289,13 @@ class _ArtStickerViewState extends State<ArtStickerView> {
   }) {
     var w = 15.0 / widget.scale;
     //限制在最小15和最大50之间
-    w = w.clamp(10, 50 );
-    var _bw=_borderWidth/2;
+    w = w.clamp(10, 50);
+    double h = w.clamp(10, 50);
+
+    var bw = _borderWidth / 2;
     var cursor = SystemMouseCursors.precise;
     var x = 0.0, y = 0.0;
-    //l,r,t,b 宽度/高度
-    var sideWidth = 20/widget.scale;
+    var radius=w;
 
     switch (direction) {
       case ResizeDirection.tl:
@@ -314,29 +315,44 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         y = widget.size.height + offset.dy - w / 2;
         break;
       case ResizeDirection.t:
-        x = widget.size.width / 2 + offset.dx - w / 2;
+        radius=5/widget.scale;
+        var nw = 45 / widget.scale;
+        nw = nw.clamp(30, 70);
+        x = widget.size.width / 2 + offset.dx - nw / 2;
         y = offset.dy - w / 2;
+        w = nw;
         cursor = SystemMouseCursors.resizeUpDown;
         break;
       case ResizeDirection.b:
-        x = widget.size.width / 2 + offset.dx - w / 2;
+        radius=5/widget.scale;
+        var nw = 45 / widget.scale;
+        nw = nw.clamp(30, 70);
+        x = widget.size.width / 2 + offset.dx - nw / 2;
         y = widget.size.height + offset.dy - w / 2;
+        w = nw;
         cursor = SystemMouseCursors.resizeUpDown;
         break;
       case ResizeDirection.l:
+        radius=5/widget.scale;
+        h = 45 / widget.scale;
+        h = h.clamp(30, 70);
         x = offset.dx - w / 2;
-        y = widget.size.height / 2 + offset.dy - w / 2;
+        y = widget.size.height / 2 + offset.dy - h / 2;
         cursor = SystemMouseCursors.resizeLeftRight;
+
         break;
       case ResizeDirection.r:
+        radius=5/widget.scale;
+        h = 45 / widget.scale;
+        h = h.clamp(30, 70);
         x = widget.size.width + offset.dx - w / 2;
-        y = widget.size.height / 2 + offset.dy - w / 2;
+        y = widget.size.height / 2 + offset.dy - h / 2;
         cursor = SystemMouseCursors.resizeLeftRight;
         break;
     }
     //边框线的宽度
-    x+=_bw;
-    y+=_bw;
+    x += bw;
+    y += bw;
 
     return Positioned(
       left: x,
@@ -362,12 +378,12 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         },
         child: Container(
           width: w,
-          height: w,
+          height: h,
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(
                 color: Color(0xffCCCCCC), width: _borderWidth * 0.45),
-            borderRadius: BorderRadius.circular(w),
+            borderRadius: BorderRadius.circular(radius),
           ),
           child: MouseRegion(
             cursor: cursor,
