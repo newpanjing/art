@@ -66,7 +66,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
     return math.min(maxWidth, math.max(minWidth, scaleAdjustedWidth));
   }
 
-  final _offset = Offset(20.00, 40.0);
+  final _offset = Offset(20.00, 50.0);
 
   Offset get offset {
     var val = _offset / widget.scale;
@@ -289,8 +289,8 @@ class _ArtStickerViewState extends State<ArtStickerView> {
   }) {
     var w = 15.0 / widget.scale;
     //限制在最小15和最大50之间
-    w = w.clamp(10, 50);
-    double h = w.clamp(10, 50);
+    w = w.clamp(10, 40);
+    double h = w.clamp(10, 40);
 
     var bw = _borderWidth / 2;
     var cursor = SystemMouseCursors.precise;
