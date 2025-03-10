@@ -12,6 +12,7 @@ class ArtStickerView extends StatefulWidget {
   final double rotation;
   final Offset position;
   final bool selected;
+  final Widget? rotateIcon;
   final Function(Size, Size)? onSizeChanged;
   final Function(Offset, Offset)? onPositionChanged;
   final Function(double)? onRotationChanged;
@@ -39,6 +40,7 @@ class ArtStickerView extends StatefulWidget {
       this.scale = 1,
       this.onEnd,
       this.primaryColor = Colors.blue,
+      this.rotateIcon,
       this.onDoubleTap});
 
   @override
@@ -217,7 +219,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
 
   Widget _buildRotate() {
     var w = 50 / widget.scale;
-    w = w.clamp(40 , 60);
+    w = w.clamp(40, 60);
 
     return Positioned(
       left: (widget.size.width + offset.dx * 2) / 2 - w / 2,
@@ -227,7 +229,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         height: w,
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: primaryColor, width: _borderWidth*0.5),
+          border: Border.all(color: primaryColor, width: _borderWidth * 0.5),
           borderRadius: BorderRadius.circular(w),
         ),
         child: GestureDetector(
@@ -271,7 +273,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
             decoration: Theme.of(context).tooltipTheme.decoration,
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
-              child: Icon(
+              child: widget.rotateIcon??Icon(
                 CupertinoIcons.rotate_right,
                 size: w * 0.6,
                 color: primaryColor,
@@ -295,7 +297,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
     var bw = _borderWidth / 2;
     var cursor = SystemMouseCursors.precise;
     var x = 0.0, y = 0.0;
-    var radius=w;
+    var radius = w;
 
     switch (direction) {
       case ResizeDirection.tl:
@@ -315,7 +317,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         y = widget.size.height + offset.dy - w / 2;
         break;
       case ResizeDirection.t:
-        radius=5/widget.scale;
+        radius = 5 / widget.scale;
         var nw = 45 / widget.scale;
         nw = nw.clamp(30, 70);
         x = widget.size.width / 2 + offset.dx - nw / 2;
@@ -324,7 +326,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         cursor = SystemMouseCursors.resizeUpDown;
         break;
       case ResizeDirection.b:
-        radius=5/widget.scale;
+        radius = 5 / widget.scale;
         var nw = 45 / widget.scale;
         nw = nw.clamp(30, 70);
         x = widget.size.width / 2 + offset.dx - nw / 2;
@@ -333,7 +335,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         cursor = SystemMouseCursors.resizeUpDown;
         break;
       case ResizeDirection.l:
-        radius=5/widget.scale;
+        radius = 5 / widget.scale;
         h = 45 / widget.scale;
         h = h.clamp(30, 70);
         x = offset.dx - w / 2;
@@ -342,7 +344,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
 
         break;
       case ResizeDirection.r:
-        radius=5/widget.scale;
+        radius = 5 / widget.scale;
         h = 45 / widget.scale;
         h = h.clamp(30, 70);
         x = widget.size.width + offset.dx - w / 2;
