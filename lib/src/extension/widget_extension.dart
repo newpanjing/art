@@ -36,13 +36,23 @@ extension WidgetExtension on Widget {
 
   //提示
   Widget tooltip(String message) {
-    return Tooltip(
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      message: message,
-      child: this,
+
+    return Builder(
+      builder: (context) {
+        var isDark = Theme.of(context).brightness == Brightness.dark;
+        return Tooltip(
+          decoration: BoxDecoration(
+            color: isDark?Color(0xff242424):Colors.black,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          textStyle: TextStyle(
+            color: isDark?Colors.white:Colors.black,
+            fontSize: 12,
+          ),
+          message: message,
+          child: this,
+        );
+      }
     );
   }
 
