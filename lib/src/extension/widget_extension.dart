@@ -36,24 +36,21 @@ extension WidgetExtension on Widget {
 
   //提示
   Widget tooltip(String message) {
-
-    return Builder(
-      builder: (context) {
-        var isDark = Theme.of(context).brightness == Brightness.dark;
-        return Tooltip(
-          decoration: BoxDecoration(
-            color: isDark?Color(0xff242424):Colors.black,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          textStyle: TextStyle(
-            color: isDark?Colors.white:Colors.black,
-            fontSize: 12,
-          ),
-          message: message,
-          child: this,
-        );
-      }
-    );
+    return Builder(builder: (context) {
+      var isDark = Theme.of(context).brightness == Brightness.dark;
+      return Tooltip(
+        decoration: BoxDecoration(
+          color: isDark ? Color(0xff242424) : Colors.black,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        textStyle: TextStyle(
+          color: isDark ? Colors.white : Colors.black,
+          fontSize: 12,
+        ),
+        message: message,
+        child: this,
+      );
+    });
   }
 
   Widget size({double? all, double? width, double? height}) {
@@ -246,6 +243,20 @@ extension WidgetExtension on Widget {
     return SizedBox(
       height: height,
       child: this,
+    );
+  }
+
+  Widget icon(
+    Widget icon, {
+    spacing = 5.0,
+  }) {
+    return Row(
+      spacing: spacing,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        icon,
+        this,
+      ],
     );
   }
 }
