@@ -45,7 +45,8 @@ class _ArtSelectState<T> extends State<ArtSelect<T>> {
     setState(() => _isOpen = true);
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
-
+    //判断是否为深色模式
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     _overlayEntry = OverlayEntry(
       builder: (context) => Stack(
         children: [
@@ -84,7 +85,7 @@ class _ArtSelectState<T> extends State<ArtSelect<T>> {
                   child: Container(
                     constraints: BoxConstraints(maxHeight: 200),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: isDarkMode? Color(0xff202020) : Colors.white,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: ListView.builder(
@@ -124,8 +125,12 @@ class _ArtSelectState<T> extends State<ArtSelect<T>> {
   }
 
   Color get primaryColor => Theme.of(context).primaryColor;
+
+  bool get isDarkMode => Theme.of(context).brightness == Brightness.dark;
   @override
   Widget build(BuildContext context) {
+    //判断是否为深色模式
+
     return CompositedTransformTarget(
       link: _layerLink,
       child: MouseRegion(
@@ -139,7 +144,7 @@ class _ArtSelectState<T> extends State<ArtSelect<T>> {
             padding: EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               border: Border.all(
-                color: _isHovered || _isOpen ? primaryColor : Colors.grey[300]!,
+                color: _isHovered ? primaryColor : (isDarkMode?Colors.grey[800]!:Colors.grey[300]!),
               ),
               borderRadius: BorderRadius.circular(4),
             ),
@@ -150,12 +155,12 @@ class _ArtSelectState<T> extends State<ArtSelect<T>> {
                     widget.value != null
                         ? (widget.labelBuilder?.call(widget.value!) ??
                             widget.value.toString())
-                        : (widget.placeholder ?? '请选择'),
+                        : (widget.placeholder ?? 'Please select'),
                     style: TextStyle(
                       fontSize: 13,
                       color: widget.value != null
-                          ? Colors.black87
-                          : Colors.black38,
+                          ? (isDarkMode?Colors.white:Colors.black87)
+                          : (isDarkMode?Colors.white:Colors.black38),
                     ),
                   ),
                 ),
@@ -205,6 +210,8 @@ class _SelectItemState<T> extends State<_SelectItem<T>> {
 
   @override
   Widget build(BuildContext context) {
+    //判断是否为深色模式
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -215,7 +222,7 @@ class _SelectItemState<T> extends State<_SelectItem<T>> {
           height: widget.height,
           padding: EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: _isHovered ? Colors.grey[100] : null,
+            color: _isHovered ? (isDarkMode?primaryColor:Colors.grey[100]) : null,
           ),
           child: Row(
             children: [
@@ -226,7 +233,7 @@ class _SelectItemState<T> extends State<_SelectItem<T>> {
                           widget.item.toString(),
                       style: TextStyle(
                         fontSize: 13,
-                        color: Colors.black87,
+                        color: isDarkMode?Colors.white:Colors.black87,
                       ),
                     ),
               ),

@@ -9,6 +9,7 @@ class ArtTextField extends StatefulWidget {
   final TextStyle? style;
   final int maxLines;
   final TextAlign textAlign;
+
   const ArtTextField({
     super.key,
     this.maxLines = 1,
@@ -18,7 +19,7 @@ class ArtTextField extends StatefulWidget {
     this.onChanged,
     this.style,
     this.onSubmitted,
-    this.textAlign=TextAlign.start,
+    this.textAlign = TextAlign.start,
   });
 
   @override
@@ -26,18 +27,18 @@ class ArtTextField extends StatefulWidget {
 }
 
 class _ArtTextFieldState extends State<ArtTextField> {
-
   late FocusNode _focusNode;
   late TextEditingController _controller;
+
   @override
   void initState() {
     super.initState();
-   init();
+    init();
   }
 
-  init(){
-    _controller = widget.controller?? TextEditingController();
-    _focusNode = widget.focusNode?? FocusNode();
+  init() {
+    _controller = widget.controller ?? TextEditingController();
+    _focusNode = widget.focusNode ?? FocusNode();
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
         widget.onSubmitted?.call(_controller.text);
@@ -56,11 +57,14 @@ class _ArtTextFieldState extends State<ArtTextField> {
   @override
   void didUpdateWidget(covariant ArtTextField oldWidget) {
     if (oldWidget.controller != widget.controller) {
-      _controller = widget.controller?? TextEditingController(text: _controller.text);
+      _controller =
+          widget.controller ?? TextEditingController(text: _controller.text);
     }
     super.didUpdateWidget(oldWidget);
   }
 
+  bool get isDarkMode =>
+      MediaQuery.of(context).platformBrightness == Brightness.dark;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +83,7 @@ class _ArtTextFieldState extends State<ArtTextField> {
         //默认也有边框
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: BorderSide(color: (isDarkMode?Colors.grey[800]!:Colors.grey[300]!)),
         ),
       ),
     );

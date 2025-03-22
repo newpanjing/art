@@ -28,10 +28,14 @@ class _ArtColorPickerState extends State<ArtColorPicker> {
     super.initState();
   }
 
+  bool get isDarkMode =>
+      MediaQuery.of(context).platformBrightness == Brightness.dark;
+
   _showColorPicker() async {
     showPopover(
       barrierColor: Colors.transparent,
       transitionDuration: 100.ms,
+      backgroundColor: isDarkMode?Colors.grey.shade900:Colors.grey.shade100,
       context: context,
       onPop: () {},
       bodyBuilder: (context) {
@@ -63,7 +67,7 @@ class _ArtColorPickerState extends State<ArtColorPicker> {
     return Container(
       padding: 1.padding,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, width: 2),
+        border: Border.all(color: isDarkMode?Colors.grey.shade800:Colors.grey, width: 2),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Stack(
