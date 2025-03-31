@@ -44,7 +44,7 @@ extension WidgetExtension on Widget {
           borderRadius: BorderRadius.circular(4),
         ),
         textStyle: TextStyle(
-          color: isDark ? Colors.white : Colors.black,
+          color: Colors.white,
           fontSize: 12,
         ),
         message: message,
@@ -248,7 +248,7 @@ extension WidgetExtension on Widget {
 
   Widget icon(
     Widget icon, {
-    spacing = 5.0,
+    double spacing = 5.0,
   }) {
     return Row(
       spacing: spacing,
