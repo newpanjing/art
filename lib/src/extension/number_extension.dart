@@ -43,4 +43,5 @@ extension NumberExtension on num {
   Widget get hPadding => SizedBox(height: toDouble());
   @Deprecated('Use width instead of vPadding')
   Widget get vPadding => SizedBox(width: toDouble());
+
 }
