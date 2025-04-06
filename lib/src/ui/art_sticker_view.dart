@@ -132,7 +132,10 @@ class _ArtStickerViewState extends State<ArtStickerView> {
           widget.controller?.onDragEnd?.call();
           // print("拖拽结束");
         },
-        child: child,
+        child: MouseRegion(
+            onEnter: (_) => isHover.value = true,
+            onExit: (_) => isHover.value = false,
+            child: child),
       ),
     );
   }
@@ -149,17 +152,18 @@ class _ArtStickerViewState extends State<ArtStickerView> {
         angle: widget.rotation * math.pi / 180,
         child: Stack(
           children: [
+            _buildHoverBorder(),
             Positioned(
                 left: pos.dx,
                 top: pos.dy,
                 child: _buildDrag(child: widget.child)),
+
             if (widget.selected) ...[
               _buildRotate(),
               ..._buildBorderLine(),
               ..._buildResize(),
             ],
             // _buildBorder(),
-            // _buildHoverBorder(),
           ],
         ),
       ),
@@ -273,11 +277,12 @@ class _ArtStickerViewState extends State<ArtStickerView> {
             decoration: Theme.of(context).tooltipTheme.decoration,
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
-              child: widget.rotateIcon??Icon(
-                CupertinoIcons.rotate_right,
-                size: w * 0.6,
-                color: primaryColor,
-              ),
+              child: widget.rotateIcon ??
+                  Icon(
+                    CupertinoIcons.rotate_right,
+                    size: w * 0.6,
+                    color: primaryColor,
+                  ),
             ),
           ),
         ),
@@ -541,7 +546,8 @@ class _ArtStickerViewState extends State<ArtStickerView> {
     return ValueListenableBuilder(
         valueListenable: isHover,
         builder: (context, value, child) {
-          if (!value || widget.selected) {
+          print("hover:$value");
+          if (!value||widget.selected) {
             return SizedBox();
           }
           return Positioned(
