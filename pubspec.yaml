@@ -1,12 +1,11 @@
 name: art
-description: "A new Flutter project."
+description: "flutter syntax sugar."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 homepage: https://noondot.com
 repository: https://github.com/newpanjing/art
 
 version: 1.0.0+1
-
 
 environment:
   sdk: ^3.5.0
