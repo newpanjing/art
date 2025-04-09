@@ -546,7 +546,7 @@ class _ArtStickerViewState extends State<ArtStickerView> {
     return ValueListenableBuilder(
         valueListenable: isHover,
         builder: (context, value, child) {
-          print("hover:$value");
+          // print("hover:$value");
           if (!value||widget.selected) {
             return SizedBox();
           }
