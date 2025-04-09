@@ -135,6 +135,7 @@ class _MenuContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var isDark=Theme.of(context).brightness==Brightness.dark;
     return Container(
       width: width,
       //约束
@@ -155,7 +156,7 @@ class _MenuContainer extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: items.map((item) {
             if (item.isDivider) {
-              return Divider(height: 1, color: Colors.grey.shade200);
+              return Divider(height: 1, color: isDark?Colors.grey.shade800:Colors.grey.shade200);
             }
 
             if (item.child != null) {
