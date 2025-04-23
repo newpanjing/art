@@ -34,7 +34,7 @@ class _ArtColorPickerState extends State<ArtColorPicker> {
   _showColorPicker() async {
     showPopover(
       barrierColor: Colors.transparent,
-      transitionDuration: 100.ms,
+      transitionDuration: 50.ms,
       backgroundColor: isDarkMode?Colors.grey.shade900:Colors.grey.shade100,
       context: context,
       onPop: () {},
