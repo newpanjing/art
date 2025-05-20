@@ -77,6 +77,10 @@ class _ArtTextFieldState extends State<ArtTextField> {
       maxLines: widget.maxLines,
       textAlign: widget.textAlign,
       decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 0,
+        ),
         hintText: widget.hintText ?? 'Enter...',
         hintStyle: TextStyle(fontSize: 14, color: Colors.grey[500]),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
