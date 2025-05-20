@@ -75,7 +75,7 @@ class _CollapsibleContainerState extends State<CollapsibleContainer>
   @override
   Widget build(BuildContext context) {
     if (!_isVisible && widget.collapse) {
-      return const SizedBox();
+      return const SizedBox.shrink();
     }
 
     return AnimatedBuilder(
