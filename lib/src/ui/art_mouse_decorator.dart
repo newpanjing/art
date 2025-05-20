@@ -45,24 +45,15 @@ class _ArtMouseDecoratorState extends State<ArtMouseDecorator> {
   }
 
   Widget _buildChild() {
-    Widget result = TweenAnimationBuilder<Color?>(
-      tween: ColorTween(
-        begin: widget.backgroundColor ?? Colors.transparent,
-        end: _targetColor,
-      ),
+    Widget result = AnimatedContainer(
       duration: widget.duration,
-      builder: (context, color, child) {
-        return Container(
-          padding: widget.padding,
-          constraints: widget.constraints,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: widget.borderRadius,
-            border: widget.border,
-          ),
-          child: child,
-        );
-      },
+      padding: widget.padding,
+      constraints: widget.constraints,
+      decoration: BoxDecoration(
+        color: _targetColor,
+        borderRadius: widget.borderRadius,
+        border: widget.border,
+      ),
       child: widget.child,
     );
 
@@ -78,12 +69,16 @@ class _ArtMouseDecoratorState extends State<ArtMouseDecorator> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
-      child: _buildChild(),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        child: _buildChild(),
+      ),
     );
   }
 }
