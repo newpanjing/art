@@ -12,6 +12,7 @@ class ArtNumberInput extends StatefulWidget {
   final bool showButtons;
   final Color? backgroundColor;
   final Color? borderColor;
+  final bool autofocus;
 
   const ArtNumberInput(
       {super.key,
@@ -24,6 +25,7 @@ class ArtNumberInput extends StatefulWidget {
       this.message = "按住鼠标←→滑动调节",
       this.onChanged,
       this.backgroundColor,
+      this.autofocus = false,
       this.borderColor});
 
   @override
@@ -39,13 +41,14 @@ class _ArtNumberInputState extends State<ArtNumberInput> {
   var focusNode = FocusNode();
   var isHover = false;
   var isFocus = false;
+
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.value.toStringAsFixed(0));
     focusNode.addListener(() {
       setState(() {
-        isFocus=focusNode.hasFocus;
+        isFocus = focusNode.hasFocus;
       });
       if (!focusNode.hasFocus) {
         callback();
@@ -103,9 +106,9 @@ class _ArtNumberInputState extends State<ArtNumberInput> {
     if (isHover) {
       bg = bg.withOpacity(0.8);
     }
-    var borderColor=widget.borderColor ?? Colors.transparent;
-    if(isFocus){
-      borderColor=theme.primaryColor;
+    var borderColor = widget.borderColor ?? Colors.transparent;
+    if (isFocus) {
+      borderColor = theme.primaryColor;
     }
     return MouseRegion(
       onEnter: (event) {
@@ -155,6 +158,7 @@ class _ArtNumberInputState extends State<ArtNumberInput> {
     return Row(
       children: [
         TextField(
+          autofocus: widget.autofocus,
           focusNode: focusNode,
           controller: _controller,
           textAlign: TextAlign.center,
