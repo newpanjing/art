@@ -16,7 +16,7 @@ extension ContextExtension on BuildContext {
   }
 
   alert(String msg,{
-    String title = "Tips",
+    String title = "Message",
     String ok = "OK",
   }) {
     showDialog(
