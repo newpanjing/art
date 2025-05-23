@@ -26,6 +26,7 @@ export 'src/ui/menu/art_menu.dart';
 export 'src/ui/menu/art_menu_inner.dart';
 export 'src/ui/menu/model.dart';
 export 'src/ui/menu/util.dart';
+export 'src/ui/menu/art_trigger.dart';
 
 //控制器
 export 'src/controller/art_sticker_controller.dart';
