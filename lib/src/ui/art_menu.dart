@@ -102,15 +102,43 @@ class _ArtMenuState extends State<ArtMenu> {
                 ],
               );
             }
-            //
-            return Container(
-              decoration: BoxDecoration(
-                color: hover ? Color(0xffF3F3F4) : null,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-              child: node,
-            );
+            return Builder(builder: (context) {
+              return MouseRegion(
+                onEnter: (e) async{
+                  //获取当前item在屏幕中的位置
+                  var box = context.findRenderObject() as RenderBox;
+                  var offset = box.localToGlobal(Offset.zero);
+                  print("位置：${offset.dx} ${offset.dy}");
+                  //计算宽度
+                  var width = box.size.width;
+                  //子菜单显示的x=当前item的x+当前item的宽度
+                  var x = offset.dx + width;
+                  //子菜单显示的y=当前item的y
+                  var y = offset.dy;
+                  print("显示位置：${x} ${y}");
+                  //计算子菜单显示的位置
+                  // var offset = e.localPosition;
+                  var menu = ArtMenu(
+                    children: item.children,
+                    onMenuItemTap: (item) {},
+                  );
+                  showContextMenu(
+                    context: context,
+                    position: Offset(x, y),
+                    menu: menu,
+                  );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: hover ? Color(0xffF3F3F4) : null,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                  child: node,
+                ),
+              );
+            });
           }),
         ),
       ),
