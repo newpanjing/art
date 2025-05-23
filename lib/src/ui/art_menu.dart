@@ -17,10 +17,14 @@ class ArtMenuItemSeparator extends ArtMenuItemBasic {
 class ArtMenuItem extends ArtMenuItemBasic {
   final Widget child;
   final VoidCallback? onTap;
+  final Widget? icon;
+  final List<ArtMenuItemBasic> children;
 
   ArtMenuItem({
     required this.child,
     this.onTap,
+    this.icon,
+    this.children = const [],
   });
 }
 
@@ -50,13 +54,7 @@ class _ArtMenuState extends State<ArtMenu> {
       for (var i = 0; i < children.length; i++) {
         var child = children[i];
         if (child is ArtMenuItem) {
-          menus.add(_buildMenuItem(child.child, () {
-            // 先移除菜单
-            entry.remove();
-            // 再触发回调
-            widget.onMenuItemTap?.call(child);
-            child.onTap?.call();
-          }));
+          menus.add(_buildMenuItem(item: child));
         } else {
           var separator = child as ArtMenuItemSeparator;
           menus.add(Divider(
@@ -70,29 +68,48 @@ class _ArtMenuState extends State<ArtMenu> {
     return [];
   }
 
-  Widget _buildMenuItem(Widget child, VoidCallback? onTap) {
+  Widget _buildMenuItem({
+    required ArtMenuItem item,
+  }) {
     return SizedBox(
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 5,
-          vertical: 3,
+          vertical: 2,
         ),
         child: GestureDetector(
-          onTap: onTap,
+          onTap: () {
+            // 先移除菜单
+            entry.remove();
+            // 再触发回调
+            widget.onMenuItemTap?.call(item);
+            item.onTap?.call();
+          },
           child: ArtMouseBuilder(builder: (context, hover) {
+            Widget node = DefaultTextStyle(
+                style: TextStyle(fontSize: 14, color: Color(0xff19191A)),
+                child: item.child);
+            if (item.icon != null || item.children.isEmpty) {
+              node = Row(
+                spacing: 10,
+                children: [
+                  if (item.icon != null) item.icon!,
+                  node,
+                  if (item.children.isNotEmpty)
+                    Icon(Icons.chevron_right,
+                        size: 14, color: Color(0xff19191A)),
+                ],
+              );
+            }
+            //
             return Container(
               decoration: BoxDecoration(
                 color: hover ? Color(0xffF3F3F4) : null,
                 borderRadius: BorderRadius.circular(5),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-              child: DefaultTextStyle(
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xff19191A)
-                  ), 
-                  child: child),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+              child: node,
             );
           }),
         ),
@@ -107,6 +124,7 @@ class _ArtMenuState extends State<ArtMenu> {
       child: Opacity(
         opacity: widget.opacity,
         child: Container(
+          padding: EdgeInsets.symmetric(vertical: 3),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
