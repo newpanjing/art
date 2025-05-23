@@ -30,7 +30,7 @@ class ArtMenuItem extends ArtMenuItemBasic {
 class ArtMenuEntry {
   final List<ArtMenuItemBasic> children;
   final Function(ArtMenuItem item)? onMenuItemTap;
-
+  final EdgeInsetsGeometry? padding;
   //透明度
   final double opacity;
 
@@ -38,5 +38,6 @@ class ArtMenuEntry {
     required this.children,
     this.onMenuItemTap,
     this.opacity = 1,
+    this.padding,
   });
 }

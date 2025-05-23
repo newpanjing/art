@@ -51,10 +51,10 @@ class _ArtMenuInnerWidgetState extends State<ArtMenuInnerWidget> {
     return SizedBox(
       width: double.infinity,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 5,
-          vertical: 2,
-        ),
+        padding: EdgeInsets.symmetric(
+              horizontal: 5,
+              vertical: 2,
+            ),
         child: GestureDetector(
           onTap: () {
             // 先移除菜单
@@ -112,8 +112,7 @@ class _ArtMenuInnerWidgetState extends State<ArtMenuInnerWidget> {
                         : null,
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                  padding:menuEntry.padding ?? EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                   child: node,
                 ),
               );
