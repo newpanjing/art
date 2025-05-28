@@ -39,6 +39,8 @@ extension ContextExtension on BuildContext {
   back(dynamic result) {
     Navigator.of(this).pop(result);
   }
+
+
 }
 
 extension StateExtension<T extends StatefulWidget> on State<T> {
