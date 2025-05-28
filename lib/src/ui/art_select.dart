@@ -1,4 +1,5 @@
 import 'package:art/art.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ArtSelect<T> extends StatefulWidget {
@@ -75,7 +76,7 @@ class _ArtSelectState<T> extends State<ArtSelect<T>> {
                   builder: (context, value, child) {
                     return Transform.scale(
                       scale: value,
-                      alignment: Alignment.topCenter,
+                      alignment: Alignment.topLeft,
                       child: Opacity(
                         opacity: value,
                         child: child,
@@ -122,6 +123,9 @@ class _ArtSelectState<T> extends State<ArtSelect<T>> {
   void _hideOverlay() {
     _overlayEntry?.remove();
     _overlayEntry = null;
+    setState(() {
+      _isOpen = false;
+    });
   }
 
   Color get primaryColor => Theme.of(context).primaryColor;
@@ -168,7 +172,7 @@ class _ArtSelectState<T> extends State<ArtSelect<T>> {
                   turns: _isOpen ? 0.5 : 0,
                   duration: Duration(milliseconds: 100),
                   child: Icon(
-                    Icons.arrow_drop_down,
+                    CupertinoIcons.chevron_down,
                     size: 16,
                     color: Colors.grey[600],
                   ),
