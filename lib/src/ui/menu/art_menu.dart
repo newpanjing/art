@@ -1,5 +1,4 @@
 import 'package:art/art.dart';
-import 'package:art/src/ui/menu/art_trigger.dart';
 import 'package:flutter/material.dart';
 
 class ArtMenu extends StatelessWidget {
@@ -31,6 +30,7 @@ class ArtMenu extends StatelessWidget {
         child: child,
       );
     }
+
     return GestureDetector(
       onSecondaryTapDown: (details) {
         showMenu(context, details.globalPosition);

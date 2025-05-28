@@ -15,13 +15,15 @@ class ArtMenuItemSeparator extends ArtMenuItemBasic {
 
 class ArtMenuItem extends ArtMenuItemBasic {
   final Widget child;
-  final VoidCallback? onTap;
+  final Function()? onTap;
+  final Function(Rect position)? onTapRect;
   final Widget? icon;
   final List<ArtMenuItemBasic> children;
 
   ArtMenuItem({
     required this.child,
     this.onTap,
+    this.onTapRect,
     this.icon,
     this.children = const [],
   });
