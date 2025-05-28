@@ -52,79 +52,85 @@ class _ArtMenuInnerWidgetState extends State<ArtMenuInnerWidget> {
       width: double.infinity,
       child: Padding(
         padding: EdgeInsets.symmetric(
-              horizontal: 5,
-              vertical: 2,
-            ),
-        child: Builder(
-          builder: (context) {
-            return GestureDetector(
-              onTap: () {
-                // 先移除菜单
-                widget.onRemove();
-                // 再触发回调
-                var rect= context.findRenderObject()?.paintBounds;
-                widget.menuEntry.onMenuItemTap?.call(item);
-                item.onTap?.call();
-                item.onTapRect?.call(rect?? Rect.zero);
-              },
-              child: ArtMouseBuilder(builder: (context, hover) {
-                Widget node = DefaultTextStyle(
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: isDark ? Color(0xffE2E2E2) : Color(0xff19191A)),
-                    child: item.child);
-                if (item.icon != null || item.children.isNotEmpty) {
-                  node = Row(
-                    spacing: 10,
-                    children: [
-                      if (item.icon != null)
-                        IconTheme(
-                            data: IconThemeData(
-                                size: 14,
-                                color:
-                                    isDark ? Color(0xffE2E2E2) : Color(0xff19191A)),
-                            child: item.icon!),
-                      node,
-                      Spacer(),
-                      if (item.children.isNotEmpty)
-                        Icon(Icons.chevron_right,
-                            size: 14,
-                            color: isDark ? Color(0xffA2A4A8) : Color(0xff19191A)),
-                    ],
-                  );
-                }
-                return Builder(builder: (context) {
-                  return MouseRegion(
-                    onEnter: (e) async {
-                      if (item.children.isEmpty) {
-                        widget.onShowSubMenu(Offset.zero, []);
-                        return;
-                      }
-                      //获取当前item在屏幕中的位置
-                      var box = context.findRenderObject() as RenderBox;
-                      var offset = box.localToGlobal(Offset.zero);
-                      //计算宽度
-                      var width = box.size.width;
-                      var x = offset.dx + width + 10;
-                      var y = offset.dy;
-                      widget.onShowSubMenu(Offset(x, y), item.children);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: hover
-                            ? (isDark ? Color(0xff3b3b3b) : Color(0xffF3F3F4))
-                            : null,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      padding:menuEntry.padding ?? EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                      child: node,
-                    ),
-                  );
-                });
-              }),
-            );
-          }
+          horizontal: 5,
+          vertical: 2,
         ),
+        child: Builder(builder: (context) {
+          return GestureDetector(
+            onTap: () {
+              // 先移除菜单
+              widget.onRemove();
+              // 再触发回调
+              // var rect= context.findRenderObject()?.paintBounds;
+              //计算当前item在屏幕中的位置
+              var box = context.findRenderObject() as RenderBox;
+              var offset = box.localToGlobal(Offset.zero);
+              var rect = Rect.fromLTWH(
+                  offset.dx, offset.dy, box.size.width, box.size.height);
+              widget.menuEntry.onMenuItemTap?.call(item);
+              item.onTap?.call();
+              item.onTapRect?.call(rect);
+            },
+            child: ArtMouseBuilder(builder: (context, hover) {
+              Widget node = DefaultTextStyle(
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: isDark ? Color(0xffE2E2E2) : Color(0xff19191A)),
+                  child: item.child);
+              if (item.icon != null || item.children.isNotEmpty) {
+                node = Row(
+                  spacing: 10,
+                  children: [
+                    if (item.icon != null)
+                      IconTheme(
+                          data: IconThemeData(
+                              size: 14,
+                              color: isDark
+                                  ? Color(0xffE2E2E2)
+                                  : Color(0xff19191A)),
+                          child: item.icon!),
+                    node,
+                    Spacer(),
+                    if (item.children.isNotEmpty)
+                      Icon(Icons.chevron_right,
+                          size: 14,
+                          color:
+                              isDark ? Color(0xffA2A4A8) : Color(0xff19191A)),
+                  ],
+                );
+              }
+              return Builder(builder: (context) {
+                return MouseRegion(
+                  onEnter: (e) async {
+                    if (item.children.isEmpty) {
+                      widget.onShowSubMenu(Offset.zero, []);
+                      return;
+                    }
+                    //获取当前item在屏幕中的位置
+                    var box = context.findRenderObject() as RenderBox;
+                    var offset = box.localToGlobal(Offset.zero);
+                    //计算宽度
+                    var width = box.size.width;
+                    var x = offset.dx + width + 10;
+                    var y = offset.dy;
+                    widget.onShowSubMenu(Offset(x, y), item.children);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: hover
+                          ? (isDark ? Color(0xff3b3b3b) : Color(0xffF3F3F4))
+                          : null,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    padding: menuEntry.padding ??
+                        EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    child: node,
+                  ),
+                );
+              });
+            }),
+          );
+        }),
       ),
     );
   }
@@ -149,6 +155,7 @@ class _ArtMenuInnerWidgetState extends State<ArtMenuInnerWidget> {
               ),
             ],
           ),
+          // 替换IntrinsicWidth为固定宽度的Container
           child: IntrinsicWidth(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
