@@ -21,6 +21,7 @@ class ArtMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     if (trigger == ArtTrigger.tap) {
       return GestureDetector(
         onTapDown: (details) {
