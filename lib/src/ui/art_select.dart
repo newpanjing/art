@@ -1,6 +1,7 @@
 import 'package:art/art.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class ArtSelect<T> extends StatefulWidget {
   final T? value;
@@ -43,6 +44,7 @@ class _ArtSelectState<T> extends State<ArtSelect<T>> {
   void _showOverlay() {
     _hideOverlay();
 
+    if (!mounted) return;
     setState(() => _isOpen = true);
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
@@ -121,10 +123,15 @@ class _ArtSelectState<T> extends State<ArtSelect<T>> {
   }
 
   void _hideOverlay() {
-    _overlayEntry?.remove();
+    final overlay = _overlayEntry;
     _overlayEntry = null;
-    setState(() {
-      _isOpen = false;
+    overlay?.remove();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _isOpen = false;
+        });
+      }
     });
   }
 
